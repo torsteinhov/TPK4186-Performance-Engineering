@@ -2,8 +2,7 @@
 
 import numpy as np
 import pandas as pd
-from random import seed
-from random import random
+import random
 import matplotlib.pyplot as plt
 
 # Data Structure
@@ -69,8 +68,41 @@ class probability_dist:
     def getStatesProbabilites(self):
         return self.states_probabilities
 
-    def setStatesProbabilities(self, states_probabilites):
+    def setStatesProbabilities(self, states_probabilities):
         self.states_probabilities = states_probabilities
+
+#Task 6
+class Token:
+
+    def __init__(self, type, string, lineNumber, columnNumber):
+        self.type = type
+        self.string = string
+        self.lineNumber = lineNumber
+        self.columnNumber = columnNumber
+
+    def getType(self):
+        return self.type
+    
+    def setType(self, type):
+        self.type = type
+    
+    def getString(self):
+        return self.string
+
+    def setString(self, string):
+        self.string = string
+    
+    def getLineNumber(self):
+        return self.lineNumber
+    
+    def setLineNumber(self, lineNumber):
+        self.lineNumber = lineNumber
+    
+    def getColumnNumber(self):
+        return self.columnNumber
+    
+    def setColumnNumber(self, columnNumber):
+        self.columnNumber = columnNumber
 
 class Manage:
     
@@ -82,27 +114,74 @@ class Manage:
         self.states = dtmc.getStates()
         self.initialState = probability_dist.getInitialState()
         self.transitions=dtmc.getTransitions()
-        
 
-
+    #Task 5
     def writeToFile(self, filename, dtmc, probability_dist):
-        states = dtmc.getStates()
-        #probability_states = probability_dist.getStatesProbabilites()
-        initial_state = probability_dist.getInitialState()
+
 
         f = open(filename, 'w')
         f.write('MarkovChain ' + dtmc.getName() + '\n')
-        f.write("  " + states[0] + ' -> ' + states[1] + ': ' + str(self.transitionMatrix[0][1]) + '; \n')
-        f.write("  " + states[1] + ' -> ' + states[0] + ': ' + str(self.transitionMatrix[1][0]) + '; \n')
-        f.write("  " + states[1] + ' -> ' + states[2] + ': ' + str(self.transitionMatrix[1][2]) + '; \n')
-        f.write("  " + states[2] + ' -> ' + states[1] + ': ' + str(self.transitionMatrix[2][1]) + '; \n')
+        f.write("  " + self.states[0] + ' -> ' + self.states[1] + ': ' + str(self.transitionMatrix[0][1]) + '; \n')
+        f.write("  " + self.states[1] + ' -> ' + self.states[0] + ': ' + str(self.transitionMatrix[1][0]) + '; \n')
+        f.write("  " + self.states[1] + ' -> ' + self.states[2] + ': ' + str(self.transitionMatrix[1][2]) + '; \n')
+        f.write("  " + self.states[2] + ' -> ' + self.states[1] + ': ' + str(self.transitionMatrix[2][1]) + '; \n')
 
         f.write("\n")
         f.write('ProbabilityDistribution p0 of ' + dtmc.getName() + '\n')
-        f.write('  ' + states[0]+"   "+str(self.initialState[0]) + '; \n')
-        f.write('  ' + states[1]+":  "+str(self.initialState[1]) + '; \n')
-        f.write('  ' + states[2]+":  "+str(self.initialState[2]) + '; \n')
+        f.write('  ' + self.states[0]+"   "+str(self.initialState[0]) + '; \n')
+        f.write('  ' + self.states[1]+":  "+str(self.initialState[1]) + '; \n')
+        f.write('  ' + self.states[2]+":  "+str(self.initialState[2]) + '; \n')
         f.close()
+
+    #Task 7
+    def readFileCreateTokens(self, filename):
+
+        keywords = ['and', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
+                    'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda',
+                    'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'with', 'yield']
+
+        operators = ['+', '-', '*', '/', '%', '**', '//', '<<', '>>', '&', 
+                    '|', '^', '~', '<', '<=', '>', '>=', '<>', '!=', '==']
+
+        delimiters = ['(', ')', '[', ']', '{', '}', ',', ':', '.', '`', '=', ';', '+=', 
+                    '-=', '*=', '/=', '//=', '%=', '&=', '|=', '^=', '>>=', '<<=', '**=']
+
+        separators = [' ', '    ', '\n']
+
+        identifiers = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
+                    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
+                    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+        tokens = []
+        lines = []
+
+        with open(filename) as f:
+            for line in f:
+                lines.extend(line.split())
+
+
+        #print(lines)
+
+        for row, line in enumerate(lines):
+            for col, element in enumerate(line):
+                if element in separators:
+                    continue
+                elif element in keywords:
+                    type = 'keyword'
+                elif element in operators:
+                    type = 'operator'
+                elif element in delimiters:
+                    type = 'delimiter'
+                elif element in identifiers:
+                    type = 'identifier'
+                    tokens.append(Token(type, line, row, col))
+                    break
+
+                tokens.append(Token(type, element, row, col))
+
+        return tokens
 
     #Task 9
     def checkMarkovChain(self, dtmc, probability_dist):
@@ -237,5 +316,9 @@ seaConditionManage.checkMarkovChain(seaCondition, seaConditionProbability)
 seaConditionManage.calcProbDist()
 seaConditionManage.calcProbDistContinous(15)
 print(seaConditionManage.timeseries(100))
+tokens = seaConditionManage.readFileCreateTokens('seaCondition.txt')
+
+for el in tokens:
+    print(el.getType())
 
 

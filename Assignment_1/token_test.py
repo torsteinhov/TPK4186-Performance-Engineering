@@ -1,12 +1,13 @@
+#Task 7
 def readFileCreateTokens(filename):
-    
+
     keywords = ['and', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
-                ' exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda',
+                'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda',
                 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'with', 'yield']
 
     operators = ['+', '-', '*', '/', '%', '**', '//', '<<', '>>', '&', 
                 '|', '^', '~', '<', '<=', '>', '>=', '<>', '!=', '==']
-    
+
     delimiters = ['(', ')', '[', ']', '{', '}', ',', ':', '.', '`', '=', ';', '+=', 
                 '-=', '*=', '/=', '//=', '%=', '&=', '|=', '^=', '>>=', '<<=', '**=']
 
@@ -20,31 +21,51 @@ def readFileCreateTokens(filename):
 
     tokens = []
     lines = []
+    rows = []
+    cols = []
 
     with open(filename) as f:
         for line in f:
-            lines.extend(line.split())
-
-
-    #print(lines)
-
-    for row, line in enumerate(lines):
-        for col, element in enumerate(line):
-            if element in separators:
-                continue
-            elif element in keywords:
-                type = 'keyword'
-            elif element in operators:
-                type = 'operator'
-            elif element in delimiters:
-                type = 'delimiter'
-            elif element in identifiers:
-                type = 'identifier'
-                tokens.append([type, line, row, col])
-                break
-
-            tokens.append([type, element, row, col])
+            lines.extend([line.split()])
     
+    print(lines)
+
+    row = 1
+    for line in lines:
+        #print('line: ', line)
+        col = 1
+        for word in line:
+            print("Word: ", word)
+            for element in word:
+
+                if element in separators:
+                    continue
+                elif element in keywords:
+                    type = 'keyword'
+                elif element in operators:
+                    type = 'operator'
+                elif element in delimiters:
+                    type = 'delimiter'
+                elif element in identifiers:
+                
+                #[['lol', 'pikk'], ['lol', 'pikk'], ['lol', 'pikk']]
+
+                    type = 'identifier'
+                    if word[-1] in delimiters:
+                        tokens.append([type, word[:-1], row, col])
+                        type = 'delimiter'
+                        tokens.append([type, word[-1], row, col])
+                        col += len(word)
+
+                        break
+                    tokens.append([type, word, row, col])
+                    col += len(word)
+                    break
+
+                tokens.append([type, word, row, col])
+                col += len(word)
+        row += 1
     return tokens
+
 
 print(readFileCreateTokens('seaCondition.txt'))

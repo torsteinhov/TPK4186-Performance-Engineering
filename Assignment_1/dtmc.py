@@ -241,6 +241,11 @@ class Manage:
     createDTMC(timeseries)
         A function that, given a time series, creates a DTMC using the frequency
         of transitions from one state to the next one observed in the time series.
+    parseTokens2DTMC(tokens)
+        A function that generates a discrete time markov chain from a list of tokens.
+    parseTokens2ProbabilityDistribution(manage, tokens)
+        A function that generates a probability distribution from a list of tokens, and
+        uses the manage class to connect the corresponding dtmc.
 
 
     """
@@ -626,7 +631,7 @@ class Manage:
 
         # Second we try with 50 iterations of timeseries
         secondTimeseries = self.timeseries(50, startState)
-        secondDtmc = self.createDTMC(startTimeseries)
+        secondDtmc = self.createDTMC(secondTimeseries)
 
         #print('50 iterations Timeseries ', secondTimeseries)
         print('50 iterations dtmc: ', secondDtmc)

@@ -395,6 +395,117 @@ class Manage:
             row += 1
         return tokens
 
+    # Task 8
+    # Help function
+    def parseTokens2DTMC(self, tokens):
+        # Would like to generate a discrete time markov chain from a list of tokens
+
+        trans = False
+        transitions = {}
+        states = []
+        name = None
+
+        # We need a start and end state for the transitions
+        startState = None
+        endState = None
+        transVal = None
+
+        numbers = ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0']
+
+        for token in tokens:
+
+            if name == None:
+                name = token.string
+
+            elif trans:
+                if token.type == 'Identifiers':
+                    endState = token.string
+                    if endState not in states:
+                        states.append(token.string)
+                
+
+                if token.type in numbers:
+                    transVal = token.string
+
+                if token.string == ';':
+                    trans = False
+                    transitions[(startState,endState)] = transVal
+                
+            elif token.columnNumber == 1:
+                trans = True
+                startState = token.string
+                if startState not in states:
+                    states.append(token.string)
+            
+            elif token.string == ';':
+
+                tMatrix = np.zeros((len(states), len(states)))
+                for key, tranState in transitions.items():
+                    toState = key[1]
+                    fromState = key[0]
+
+                    y = states.index(toState)
+                    x = states.index(fromState)
+
+                    tMatrix[x][y] = tranState
+                
+            
+                return DTMC(name, states, tMatrix)
+
+    #Help function
+    def parseTokens2ProbabilityDistribution(self, manage, tokens):
+        # We need our manage class to connect the appropriate DTMC
+
+        DTMC = None
+        prob = False
+        probList = []
+
+        index = None
+        name = None
+
+        numbers = ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0']
+
+        for token in tokens:
+            if not prob and token.string != ';':
+
+                if token.type in numbers:
+                    name += str(token.string)
+                
+                elif name == None:
+                    name = token.string
+
+                elif token.type == 'identifiers' and DTMC == None:
+                    dtmcName = token.string
+                    for dtmc in manage.dtmc:
+                        if dtmc.name == token.string:
+                            DTMC = dtmc
+                    
+                    probList = np.zeros(len(DTMC.states))
+                
+                if token.columnNumber == 1:
+                    prob = True
+            
+            if prob:
+                if token.type == 'identifiers':
+                    index = DTMC.states.index(token.string)
+                
+                if token.type in numbers:
+                    probList[index] = token.string
+                
+                if token.string == ';':
+                    prob = False
+                    return probability_dist(name=name, initial_state=DTMC, states_probabilities=probList)
+        
+    def parser(self, tokens):
+
+        '''
+        Creates DTMC's and probability distributions by parsing a list of tokens,
+        utilizes the help functions parseTokens2ProbabilityDistribution(self, manage, tokens)
+        and parseTokens2DTMC(self, tokens).
+        '''
+
+
+
 
 #CALCULATIONS
     #Task 10
@@ -439,17 +550,12 @@ class Manage:
         for i in range(numberOfIterations):
             
             if currentSituation==self.states[0]:
-                #nextStateOptions=[self.states[0]]*6+[self.states[1]]*4
-                #print(seaConditionProbability.getStatesProbabilites())
-                #print(self.seaConditionProbability.getStatesProbabilites()[1][0])
                 
                 nextStateOptions= ([self.states[0]]*int((seaConditionProbability.getStatesProbabilites()[0][0])*10)+
                 [self.states[1]]*int(seaConditionProbability.getStatesProbabilites()[0][1]*10))
-                #print(nextStateOptions)
                
                 change=random.choice(nextStateOptions)
             elif currentSituation==self.states[1]:
-                #nextStateOptions=[self.states[0]]*6+[self.states[1]]*3+[self.states[2]]*1
 
                 nextStateOptions= ([self.states[0]]*int((seaConditionProbability.getStatesProbabilites()[1][0])*10)+ 
                 [self.states[1]]*int(seaConditionProbability.getStatesProbabilites()[1][1]*10)+ 
@@ -458,7 +564,6 @@ class Manage:
                 change=random.choice(nextStateOptions)
             
             elif currentSituation==self.states[2]:
-                #nextStateOptions=[self.states[1]]*9+[self.states[2]]*1
 
                 nextStateOptions=([self.states[2]]*int((seaConditionProbability.getStatesProbabilites()[2][2])*10)+
                 [self.states[1]]*int(seaConditionProbability.getStatesProbabilites()[2][1]*10))
@@ -466,7 +571,7 @@ class Manage:
                 change=random.choice(nextStateOptions)
 
             else:
-                print("Check input") #Fikse litt her
+                print("Check input")
    
             timeseries.append(change)
             currentSituation=change
@@ -599,13 +704,21 @@ Test task 6:
 
 
 """
-Test task 7 and 8?!:
+Test task 7:
 """
-print("Task 7 and 8?!:")
+print("Task 7:")
 tokens = seaConditionManage.readFileCreateTokens('seaCondition.txt')
 for element in tokens:
     print([element.type, element.string, element.lineNumber, element.columnNumber])
 print("\n")
+
+"""
+Test task 8:
+"""
+print("Task 8:")
+print(seaConditionManage.parseTokens2DTMC(tokens))
+print(seaConditionManage.parseTokens2ProbabilityDistribution(seaCondition, tokens))
+print('\n')
 
 """
 Test task 9:
@@ -652,25 +765,3 @@ Test task 14:
 print("Task 14:")
 seaConditionManage.determineLengthSeries("CALM")
 print("\n")
-
-
-
-seaConditionManage = Manage('seaCondition', seaCondition, seaConditionProbability)
-seaConditionManage.writeToFile('seaCondition.txt', seaCondition, seaConditionProbability) 
-seaConditionManage.checkMarkovChain(seaCondition, seaConditionProbability)
-seaConditionManage.calcProbDist()
-
-
-tokens = seaConditionManage.readFileCreateTokens('seaCondition.txt')
-
-
-#print(tokens)
-
-#for element in tokens:
-#    print([element.type, element.string, element.lineNumber, element.columnNumber])
-seaConditionManage.calcProbDistContinous(5)
-print(seaConditionProbability.getStatesProbabilites())
-#timeseries = seaConditionManage.timeseries(50, "CALM")
-#print(timeseries)
-#print(seaConditionManage.createDTMC(timeseries))
-#seaConditionManage.determineLengthSeries("CALM")

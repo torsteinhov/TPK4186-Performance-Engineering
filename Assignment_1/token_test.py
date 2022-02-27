@@ -1,3 +1,5 @@
+import re
+
 #Task 7
 def readFileCreateTokens(filename):
 
@@ -68,4 +70,6 @@ def readFileCreateTokens(filename):
     return tokens
 
 
-print(readFileCreateTokens('seaCondition.txt'))
+#print(readFileCreateTokens('seaCondition.txt'))
+numbers = re.findall('[0-1]+', )
+print(numbers)

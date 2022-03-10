@@ -1,13 +1,19 @@
+'''
+ASSIGNMENT 1 - TPK4186 - Spring 2022
+
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 # Import
 
 import numpy as np
-import pandas as pd
 import random
-import matplotlib.pyplot as plt
 import re
 
-# Data Structure
 
+# Data Structure
 #Task 1
 class DTMC:
 
@@ -132,9 +138,9 @@ class Token:
     Attributes
     ----------
     type : str
-        a string with the name of the probability distribution
+        a string with the type of token
     string : str
-        a string with the initial state
+        a string with the token value
     lineNumber : int
         an integer that keeps track of the row number of the token, if we imagine the .txt file as a grid
     columnNumber : int
@@ -261,8 +267,8 @@ class Manage:
         
     #Task 5
     def writeToFile(self, filename, dtmc, probability_dist):
+
         states = dtmc.getStates()
-        #probability_states = probability_dist.getStatesProbabilites()
         initial_state = probability_dist.getInitialState()
         try:
             with open(filename, 'w') as f:
@@ -289,24 +295,15 @@ class Manage:
 
         correct = True 
 
-        #Sjekk at initialvalues ikke er større enn 1:
+        #Check that the sum of the intialvalues equals to one
         if sum(self.initialState)!=1:
             print("The sum of the initialvalues have to be equal to one")
+            correct = False
 
         #Checking sum
         if (sum(self.transitionMatrix[0]) or sum(self.transitionMatrix[1]) or sum(self.transitionMatrix[2])) != 1:
             print("The sum of the probabilities is not correct!")
             correct = False 
-
-
-         #Checking that CR and RC are not greater than 0.0. IF NEEDED
-        '''if (transitionMatrix[0][2]):
-            print("CR can not be greater than 0.0")
-            correct = False
-
-        if (transitionMatrix[2][0] > 0):
-            print("RC can not be greater than 0.0")
-            correct = False'''  
 
 
         #Checking in states:
@@ -321,8 +318,6 @@ class Manage:
         if (self.transitionMatrix[0][2] == 0 and self.transitionMatrix[1][2] == 0):
             print("You do not have in states for:", self.states[2])
             correct = False
-
-       
             
         #Checking outstates:
         if (self.transitionMatrix[0][1] == 0 and self.transitionMatrix[0][2] == 0):
@@ -339,6 +334,8 @@ class Manage:
 
         if correct:
             print("Congratulations, the DTMC and the probability distribution has feasible values.")
+
+        return correct
 
     #Task 7
     def readFileCreateTokens(self, filename):
@@ -500,7 +497,8 @@ class Manage:
                 if token.string == ';':
                     prob = False
                     return probability_dist(name=name, initial_state=DTMC, states_probabilities=probList)
-        
+
+    # Main function    
     def parser(self, tokens):
 
         '''
@@ -509,10 +507,7 @@ class Manage:
         and parseTokens2DTMC(self, tokens).
         '''
 
-
-
-
-#CALCULATIONS
+    #CALCULATIONS
     #Task 10
     
     def calcProbDist(self):
@@ -526,7 +521,7 @@ class Manage:
             prob = np.round(np.dot(prob,self.transitionMatrix), decimals=4)
             it+=1
         print("After " + str(it) + " iterations the probability distribution converged. The probability distribution is: \n" + str(prob))    
-        #return prob
+        return prob
 
     #Task 11
     
@@ -544,12 +539,11 @@ class Manage:
         return prob_progression
 
 
-#Time Series
+    #Time Series
 
-#Task 12
-    def timeseries(self, numberOfIterations, currentSituation):  #SE OVER OG RYDDE LITT
+    #Task 12
+    def timeseries(self, numberOfIterations, currentSituation, seaConditionProbability):
 
-        #print("Start state: "+ str(self.states[0]))
         timeseries = []
 
         for i in range(numberOfIterations):
@@ -581,7 +575,7 @@ class Manage:
             timeseries.append(change)
             currentSituation=change
 
-        print("After "+str(numberOfIterations)+" sequenses of states we end up with the follow timeseries: ")
+        print("After "+str(numberOfIterations)+" sequenses of states we end up with the timeseries: ")
         return timeseries
     
     
@@ -589,6 +583,11 @@ class Manage:
     #Task 13
 
     def createDTMC(self, timeseries):
+
+        '''
+        Returns in the format:
+        [[fromState, toState, # of appearences, probability %]]
+        '''
 
         matrix = []
         sequence = []
@@ -619,154 +618,163 @@ class Manage:
         return duos
     
     # Task 14
-    def determineLengthSeries(self, startState):
+    def determineLengthSeries(self, startState, seaConditionProbability):
         # An experimental study of determining the length of a timeseries to get an offset of <= 1%
+        print ('\n')
 
         # First we try with 15 iterations of timeseries
-        startTimeseries = self.timeseries(15, startState)
+        startTimeseries = self.timeseries(15, startState, seaConditionProbability)
         startDtmc = self.createDTMC(startTimeseries)
 
         #print('15 iterations Timeseries ', startTimeseries)
         print('15 iterations dtmc: ', startDtmc)
+        print ('\n')
 
         # Second we try with 50 iterations of timeseries
-        secondTimeseries = self.timeseries(50, startState)
+        secondTimeseries = self.timeseries(50, startState, seaConditionProbability)
         secondDtmc = self.createDTMC(secondTimeseries)
 
         #print('50 iterations Timeseries ', secondTimeseries)
         print('50 iterations dtmc: ', secondDtmc)
+        print ('\n')
 
         # Third we try with 100 iterations of timeseries
-        thirdTimeseries = self.timeseries(100, startState)
+        thirdTimeseries = self.timeseries(100, startState, seaConditionProbability)
         thirdDtmc = self.createDTMC(thirdTimeseries)
 
         #print('100 iterations Timeseries ', thirdTimeseries)
         print('100 iterations dtmc: ', thirdDtmc)
+        print ('\n')
 
         # Fourth we try with 300 iterations of timeseries
-        fourthTimeseries = self.timeseries(300, startState)
+        fourthTimeseries = self.timeseries(300, startState, seaConditionProbability)
         fourthDtmc = self.createDTMC(fourthTimeseries)
 
         #print('300 iterations Timeseries ', fourthTimeseries)
         print('300 iterations dtmc: ', fourthDtmc)
+        print ('\n')
 
         # Finally we try with 50000 iterations of timeseries
-        finalTimeseries = self.timeseries(50000, startState)
+        finalTimeseries = self.timeseries(50000, startState, seaConditionProbability)
         finalDtmc = self.createDTMC(finalTimeseries)
 
         #print('50000 iterations Timeseries ', finalTimeseries)
         print('50000 iterations dtmc: ', finalDtmc)
 
-                    
-"""
-Below we will test the different tasks.  
 
-We will first setup the DTMC and the sea condition probability.
+def runTasks():
 
-"""
-seaCondition = DTMC("seaCondition", 
-                    ['CALM', 'MODERATE', 'ROUGH'],
-                    [["CC","CM","CR"],
-                    ["MC","MM","MR"],
-                    ["RC","RM","RR"]])
-                    
-seaConditionProbability = probability_dist('seaCondition',
-                                            [1.0, 0.0, 0.0],
-                                            [[0.6, 0.4, 0.0],
-                                            [0.6, 0.3, 0.1],
-                                            [0.0, 0.9, 0.1]])
+    """
+    Below we will test the different tasks.  
 
-
-
-"""
-Test task 1,2,3 and 4:
-"""
-print("Task 1,2,3 and 4:")
-print(seaCondition.getName())
-print(seaCondition.getStates())
-print(seaCondition.getTransitions())
-
-print(seaConditionProbability.getName())
-print(seaConditionProbability.getInitialState())
-print(seaConditionProbability.getStatesProbabilites())
-
-seaConditionManage = Manage('seaCondition', seaCondition, seaConditionProbability)
+    We will first setup the DTMC and the sea condition probability.
+    """
+    seaCondition = DTMC("seaCondition", 
+                        ['CALM', 'MODERATE', 'ROUGH'],
+                        [["CC","CM","CR"],
+                        ["MC","MM","MR"],
+                        ["RC","RM","RR"]])
+                        
+    seaConditionProbability = probability_dist('seaCondition',
+                                                [1.0, 0.0, 0.0],
+                                                [[0.6, 0.4, 0.0],
+                                                [0.6, 0.3, 0.1],
+                                                [0.0, 0.9, 0.1]])
 
 
 
-print("\n")
+    """
+    Test task 1,2,3 and 4:
+    """
+    print("Task 1,2,3 and 4:")
+    print(seaCondition.getName())
+    print(seaCondition.getStates())
+    print(seaCondition.getTransitions())
 
-"""
-Test task 5:
-"""
-print("Task 5:")
-seaConditionManage.writeToFile('seaCondition.txt', seaCondition, seaConditionProbability)
-print("\n")
+    print(seaConditionProbability.getName())
+    print(seaConditionProbability.getInitialState())
+    print(seaConditionProbability.getStatesProbabilites())
 
-"""
-Test task 6:
-"""
-
-
-"""
-Test task 7:
-"""
-print("Task 7:")
-tokens = seaConditionManage.readFileCreateTokens('seaCondition.txt')
-for element in tokens:
-    print([element.type, element.string, element.lineNumber, element.columnNumber])
-print("\n")
-
-"""
-Test task 8:
-"""
-print("Task 8:")
-print(seaConditionManage.parseTokens2DTMC(tokens))
-print(seaConditionManage.parseTokens2ProbabilityDistribution(seaCondition, tokens))
-print('\n')
-
-"""
-Test task 9:
-"""
-print("Task 9:")
-seaConditionManage.checkMarkovChain(seaCondition, seaConditionProbability)
-print("\n")
+    seaConditionManage = Manage('seaCondition', seaCondition, seaConditionProbability)
 
 
-"""
-Test task 10:
-"""
-print("Task 10:")
-seaConditionManage.calcProbDist()
-print("\n")
+
+    print("\n")
+
+    """
+    Test task 5:
+    """
+    print("Task 5:")
+    seaConditionManage.writeToFile('seaCondition.txt', seaCondition, seaConditionProbability)
+    print("\n")
+
+    """
+    Test task 6:
+    """
+    # The Token class
+
+    """
+    Test task 7:
+    """
+    print("Task 7:")
+    tokens = seaConditionManage.readFileCreateTokens('seaCondition.txt')
+    for element in tokens:
+        print([element.type, element.string, element.lineNumber, element.columnNumber])
+    print("\n")
+
+    """
+    Test task 8:
+    """
+    print("Task 8:")
+    print(seaConditionManage.parseTokens2DTMC(tokens))
+    print(seaConditionManage.parseTokens2ProbabilityDistribution(seaCondition, tokens))
+    print('\n')
+
+    """
+    Test task 9:
+    """
+    print("Task 9:")
+    seaConditionManage.checkMarkovChain(seaCondition, seaConditionProbability)
+    print("\n")
 
 
-"""
-Test task 11:
-"""
-print("Task 11:")
-seaConditionManage.calcProbDistContinous(5)
-print("\n")
+    """
+    Test task 10:
+    """
+    print("Task 10:")
+    seaConditionManage.calcProbDist()
+    print("\n")
 
 
-"""
-Test task 12:
-"""
-print("Task 12:")
-timeseries = seaConditionManage.timeseries(50, "CALM")
-print("\n")
+    """
+    Test task 11:
+    """
+    print("Task 11:")
+    seaConditionManage.calcProbDistContinous(5)
+    print("\n")
 
 
-"""
-Test task 13:
-"""
-print("Task 13:")
-print(seaConditionManage.createDTMC(timeseries))
-print("\n")
+    """
+    Test task 12:
+    """
+    print("Task 12:")
+    timeseries = seaConditionManage.timeseries(50, "CALM", seaConditionProbability)
+    print(timeseries)
+    print("\n")
 
-"""
-Test task 14:
-"""
-print("Task 14:")
-seaConditionManage.determineLengthSeries("CALM")
-print("\n")
+
+    """
+    Test task 13:
+    """
+    print("Task 13:")
+    print(seaConditionManage.createDTMC(timeseries))
+    print("\n")
+
+    """
+    Test task 14:
+    """
+    print("Task 14:")
+    seaConditionManage.determineLengthSeries("CALM", seaConditionProbability)
+    print("\n")
+
+runTasks()

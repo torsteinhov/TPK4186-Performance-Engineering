@@ -41,13 +41,13 @@ class ReportGenerator:
             width: 50%;
             }
         </style>
-        <body style="background-color:#006039;"><h1>
+        <body><h1>
                 <p>Overview of the different Kaplan-Meier estimate associated with components from the """ + self.getDatabase().folder + """</p>
             </h1>
         """
 
         for component in components:
-            text += """\n  <p>Kaplan-Meier estimate associated with component: """ + component + """</p>"""
+            text += """\n  <h2><p>Kaplan-Meier estimate associated with component: """ + component + """</p></h2>"""
             text += """\n  <img src=""" + """'KME_analysis/survival_analysis_""" + component + """.png' class="center">"""
         
         text += """\n </body> </html>"""

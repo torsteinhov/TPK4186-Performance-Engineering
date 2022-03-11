@@ -3,12 +3,47 @@ from database import *
 import matplotlib.pyplot as plt
 
 class kaplanMeierEstimator:
+
+    """
+    
+    ...
+
+    Attributes
+    ----------
+    component : str
+        A string with the name of the folder with the .xlsx files we would like to create a database from.
+    database : database_object
+        A database object with all relevant data for the kaplan meier estimator class.
+    sorted_durations : list
+        Durations of the lifetime of different components
+    KME_list : list
+        A list of tuples in format (time, number-of-survivors) ordered by time. In other words, a record of the number of surviving components in a given fleet
+        as a function of time.
+
+    Methods
+    -------
+    getComponent(self):
+        returns the string component
+    getDatabase(self):
+        returns the database object
+    calculateDurations(self):
+        takes in the worksheets dictionary, parses it and calculates the lifetime of the different components based on the in date and either the out date or the failure date.
+        Sets a sorted list(ascending) of the lifetime of different units of that specific component. 
+    getCalculatedDurations(self):
+        returns the lifetime durations of the component.
+    generateKME(self):
+        iterates through the list of ascending lifetime durations and calculates tuples of the format (time, number-of-survivors).
+        Sets the KME_list with these values.
+    getKMElist(self):
+        returns a list of all the KME tuples (time, number-of-survivors)
+    """
+
     def __init__(self, component, database):
         
         self.component = component
         self.database = database
-        self.sorted_durations = 0
-        self.KME_list = 0
+        self.sorted_durations = []
+        self.KME_list = []
         self.calculateDurations()
         self.generateKME()
 

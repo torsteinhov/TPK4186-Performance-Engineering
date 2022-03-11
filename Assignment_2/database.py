@@ -2,6 +2,48 @@ from manager import *
 import xlsxwriter
 
 class Unit:
+
+    """
+    A class used to represent a Unit, which is a row in the excel worksheets with different attributes like code, description, dates and etc.
+    Used by the Database class to create dictionaries based on the components.
+    ...
+
+    Attributes
+    ----------
+    code : str
+        String with the code id of the component
+    description : str
+        A description of the component
+    inDate : datetime_object
+        The date the component was set in service.
+    outDate : datetime_object
+        The date the component was taken out of service.
+    failureDate : datetime_object
+        The date the component failed, and had to be taken out of service.
+
+    Methods
+    -------
+    def getCode(self):
+        gets the code
+    def setCode(self, code):
+        sets the code
+    def getDescription(self):
+        gets the description
+    def setDescription(self, description):
+        sets the description
+    def getInDate(self):
+        gets the In Date
+    def setInDate(self, inDate):
+        sets the In Date
+    def getOutDate(self):
+        gets the Out Date
+    def setOutDate(self, outDate):
+        sets the Out Date
+    def getFailureDate(self):
+        gets the FailureDate
+    def setFailureDate(self, FailureDate):
+        sets the Failure Date
+    """
         
     def __init__(self, code, description, inDate, outDate, failureDate):
         self.code = code
@@ -40,19 +82,33 @@ class Unit:
     def setFailureDate(self, FailureDate):
         self.FailureDate = FailureDate
 
-'''
-Value: ['PRS-001-00001', 'Pressure sensor', datetime.datetime(2021, 2, 14, 14, 0), datetime.datetime(2021, 11, 15, 8, 0), None]
-
-{2: ['PRS-001-00001', 'Pressure sensor', datetime.datetime(2021, 2, 14, 14, 0), datetime.datetime(2021, 11, 15, 8, 0), None], 
-3: ['SLV-001-00001', 'Solenoid valve', datetime.datetime(2019, 6, 26, 21, 0), None, datetime.datetime(2019, 12, 17, 21, 0)], 
-4: ['SLV-001-00002', 'Solenoid valve', datetime.datetime(2019, 2, 5, 19, 0), None, datetime.datetime(2019, 9, 17, 0, 0)],
- 5: ['SLV-001-00003', 'Solenoid valve', datetime.datetime(2021, 6, 28, 22, 0), None, datetime.datetime(2021, 12, 5, 5, 0)],}
-'''
-
 # Task 4
 class DataBase:
     
+    """
+    A class to store all Reliabilitydata in an easy to access format. Contains multiple functionalities that parses the worksheets and stores it in the database.
+    Some of this functionality could have been initiated in the __init__ function, but for extendability reasons we wanted to leave this as an optional function.
+    ...
 
+    Attributes
+    ----------
+    folder : str
+        A string with the name of the folder with the .xlsx files we would like to create a database from.
+    worksheets : dictionary
+        A dictionary of the data in all the worksheets, after processed, contains all components as keys and all the associating data as value in list format.
+        {component: [reliability_data..]}
+
+    Methods
+    -------
+    def setUnitsFromExcel(self, path):
+        uses the extractExcel() function to read the excel worksheets and extract it in a dictionary format. Parses this dictionary format to return a new dictionary
+        with format {component: [units..]}. A format that stores all units for each type of component.
+    def createDatabase(self):
+        Initializes the database and runs the setUnitsFromExcel on all the worksheet files in the folder, which is collected with the listFilesInFolder() functions.
+        Sets the worksheets of the database equal to all the data in all the excel files, parsed and finalized as in the setUnitsFromExcel() function.
+    def printToExcel(self):
+        Iterates through the parsed dictionary and prints to an excel file sorted on each component.
+    """
 
     def __init__(self, folder):
         self.folder = folder

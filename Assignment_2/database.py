@@ -49,16 +49,24 @@ Value: ['PRS-001-00001', 'Pressure sensor', datetime.datetime(2021, 2, 14, 14, 0
  5: ['SLV-001-00003', 'Solenoid valve', datetime.datetime(2021, 6, 28, 22, 0), None, datetime.datetime(2021, 12, 5, 5, 0)],}
 '''
 
+# Task 4
 class DataBase:
     
-    def __init__(self):
-        self.units = None
+
+
+    def __init__(self, folder):
+        self.folder = folder
+        self.worksheets = {}
     
+    def getWorksheets(self):
+        return self.worksheets
+    
+    # Task 4
     def setUnitsFromExcel(self, path):
-
-        dictionary = extractExcel(path)
+        
         units = {}
-
+        dictionary = extractExcel(self.folder+'/'+path)
+        
         for key, value in dictionary.items():
             
             if key == 1:
@@ -69,36 +77,58 @@ class DataBase:
                     units[value[1]] = [Unit(value[0], value[1], value[2], value[3], value[4])]
                 else:
                     units[value[1]].append(Unit(value[0], value[1], value[2], value[3], value[4]))
+                    
+        for key, value in units.items():
+            if key in self.worksheets:
+                self.worksheets[key].extend(value)
+            else:
+                self.worksheets[key] = value
         
-        self.units = units
+    
+    def createDatabase(self):
+        
+        files = listFilesInFolder(self.folder)
+        #print('FILES: ', files)
 
-    def getUnits(self):
-        return self.units
+        for excel_file in files:
+            self.setUnitsFromExcel(excel_file)
 
-'''
-test = DataBase()
-test.setUnitsFromExcel('ReliabilityData/Plant1.xlsx')
-units = test.getUnits()
-print(units['Pressure sensor'][0].getCode())
-'''
+    # Task 5
+    def printToExcel(self):
+        workbook = xlsxwriter.Workbook(self.folder+"_database.xlsx")
+        write_worksheet = workbook.add_worksheet()
+        
+        write_worksheet.write('A1', 'Code')
+        write_worksheet.write('B1', 'Description')
+        write_worksheet.write('C1', 'In-Service Date')
+        write_worksheet.write('D1', 'Out-Service Date')
+        write_worksheet.write('E1', 'Failure Date')
 
-def printToExcel(DataBase):
-    workbook = xlsxwriter.Workbook("Plant0.xlsx")
-    worksheet = workbook.add_worksheet()
+        worksheets = self.getWorksheets()
+        col = 0
+        row = 1
+        
+        #  {'Pressure sensor': [<__main__.Unit object at 0x7f30ed16c5d0>, <__main__.Unit object at 0x7f30ed2161d0>, <__main__.Unit object at 0x7f30ed2160d0>]}
+        for key, value in worksheets.items():
+            for unit in value:
+                write_worksheet.write(row,col,unit.getCode())
+                write_worksheet.write(row,col+1,unit.getDescription())
+                write_worksheet.write(row,col+2,unit.getInDate())
+                write_worksheet.write(row,col+3,unit.getOutDate())
+                write_worksheet.write(row,col+4,unit.getFailureDate())
+                col=0
+                row+=1
 
-    data = DataBase.getUnits()
-    worksheet.write('A1', 'Hello..')
-    print('Data: ', data)
-    workbook.close()
+        print('worksheets: ', worksheets)
+        workbook.close()
 
-
-
-test2 = DataBase()
-test2.setUnitsFromExcel('ReliabilityData/Plant1.xlsx')
-printToExcel(test2)
-
-
-#Writing to excel
-#https://www.geeksforgeeks.org/python-create-and-write-on-excel-file-using-xlsxwriter-module/#:~:text=XlsxWriter%20is%20a%20Python%20module,conditional%20formatting%20and%20many%20others.
-
-
+database = DataBase('ReliabilityData')
+'''database.setUnitsFromExcel('ReliabilityData','Plant1.xlsx')
+worksheets = database.getWorksheets()
+print('Worksheets: ', worksheets)
+database.setUnitsFromExcel('ReliabilityData','Plant2.xlsx')
+worksheets = database.getWorksheets()
+print('Worksheets: ', worksheets)'''
+database.createDatabase()
+print(database.getWorksheets())
+database.printToExcel()

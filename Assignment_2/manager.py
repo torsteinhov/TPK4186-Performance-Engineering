@@ -7,17 +7,16 @@ def listFilesInFolder(path):
 
     files = os.listdir(path)
 
-    for file in files:
-        print(file)
+    files_list = []
+
+    for excel_file in files:
+        #print(excel_file)
+        files_list.append(str(excel_file))
+
+    return files_list
+
 
 def extractExcel(workbook):
-
-    '''
-    workbook_dict : dictionary
-
-    Iterates through the excel workbook, adds a new key, object pair for each row in the excel sheet.
-    The dictionary has keys representing the row number, with and a list of the cells representing the value.    
-    '''
 
     workbook_dict = {}
 
@@ -38,7 +37,7 @@ def dateFromString(string):
     in datetime format.
     '''
 
-    date_time_object = datetime.strptime(string, '%d.%m.%Y  %H:%M:%S')
+    date_time_object = datetime.strptime(string, '%Y-%m-%d  %H:%M:%S')
 
     return date_time_object
 
@@ -54,14 +53,16 @@ def diffDate(date1, date2):
 
     return hours
 
+
 def testFunctions():
 
     listFilesInFolder('ReliabilityData')
-    print(extractExcel('ReliabilityData\Plant1.xlsx'))
-    print(dateFromString('14.02.2021  14:00:00'))
+    print(extractExcel('ReliabilityData/Plant1.xlsx'))
+    print(dateFromString('14-02-2021  14:00:00'))
 
-    date1 = dateFromString('14.02.2021  14:00:00')
-    date2 = dateFromString('16.02.2021  14:00:00')
+    date1 = dateFromString('14-02-2021  14:00:00')
+    date2 = dateFromString('16-02-2021  14:00:00')
     print(diffDate(date1, date2))
+    
 
 #testFunctions()

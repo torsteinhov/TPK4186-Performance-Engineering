@@ -81,4 +81,4 @@ def testFunctions():
     print(diffDate(date1, date2))
     
 
-#testFunctions()
+testFunctions()

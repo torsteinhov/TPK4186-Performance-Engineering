@@ -5,7 +5,9 @@ import matplotlib.pyplot as plt
 class kaplanMeierEstimator:
 
     """
-    
+    A class to represent a Kaplan-Meier Estimator that records the number of surviving components in a given fleet as a function of time.
+    It is recorded as a number of points (time, number-of-survivors) ordered by time.
+    The class represents all data structures to store the relevant information aswell as functions to calculate and retrieve data.
     ...
 
     Attributes
@@ -96,10 +98,45 @@ class kaplanMeierEstimator:
 
 class Calculator:
 
+    """
+    The Calculator class is a class that takes in a component and uses the calculation and management functions of the KME class.
+    With this data it calculates values for plotting a Survival Analysis using the matplotlib library.
+    It is focused on keeping the Calculator class for a single component, so that it is easy to modify and supports scalability.
+    ...
+
+    Attributes
+    ----------
+    KME : kaplanMeierEstimator_object
+        An object of the kaplanMeierEstimator class
+    x : list
+        A database object with all relevant data for the kaplan meier estimator class.
+    sorted_durations : list
+        Durations of the lifetime of different components
+    KME_list : list
+        A list of tuples in format (time, number-of-survivors) ordered by time. In other words, a record of the number of surviving components in a given fleet
+        as a function of time.
+
+    Methods
+    -------
+    getKME(self):
+        returns the kaplan-Meier-Estimator object
+    getX(self):
+        returns the x list
+    getY(self):
+        returns the y list
+    preparePlotValues(self):
+        takes in the sorted_durations and the KME_list from the KME object, and applies calculations to these list to prepare
+        them for plotting, the modified(prepared) values are stored in the x and y list.
+    plotKME(self):
+        Uses the matplotlib library and the component of the KME object to plot a survival analysis.
+    exportKMEtofile(self):
+        Same functionality as plotKME() but it also saves the plots as .png and .pdf files in a dedicated folder (/KME_analysis).
+    """
+
     def __init__(self, KME):
         self.KME = KME
-        self.x = 0
-        self.y = 0      
+        self.x = []
+        self.y = []   
     
     def getKME(self):
         return self.KME
@@ -171,4 +208,4 @@ def kmeCalcRun():
         calc_object.plotKME()
         calc_object.exportKMEtofile()
 
-#kmeCalcRun()
+kmeCalcRun()

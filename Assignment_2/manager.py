@@ -1,3 +1,11 @@
+'''
+Assignment 2 - TPK4186
+
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 import os
 from openpyxl import load_workbook
 from datetime import datetime
@@ -29,7 +37,7 @@ def listFilesInFolder(folder):
 
         files_list.append(str(excel_file))
 
-    return files_list
+    return sorted(files_list)
 
 
 def extractExcel(workbook):
@@ -68,17 +76,3 @@ def diffDate(date1, date2):
     hours = divmod(duration_seconds, 3600)[0]
 
     return hours
-
-
-def testFunctions():
-
-    listFilesInFolder('ReliabilityData')
-    print(extractExcel('ReliabilityData/Plant1.xlsx'))
-    print(dateFromString('14-02-2021  14:00:00'))
-
-    date1 = dateFromString('14-02-2021  14:00:00')
-    date2 = dateFromString('16-02-2021  14:00:00')
-    print(diffDate(date1, date2))
-    
-
-testFunctions()

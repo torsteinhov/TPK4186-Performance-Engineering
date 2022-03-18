@@ -1,3 +1,11 @@
+'''
+Assignment 2 - TPK4186
+
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from manager import *
 from database import *
 from kaplanMeierEstimator import *
@@ -6,9 +14,8 @@ import matplotlib.pyplot as plt
 class ReportGenerator:
 
     """
-    The Calculator class is a class that takes in a component and uses the calculation and management functions of the KME class.
-    With this data it calculates values for plotting a Survival Analysis using the matplotlib library.
-    It is focused on keeping the Calculator class for a single component, so that it is easy to modify and supports scalability.
+    The ReportGenerator class takes in a database, a kaplanMeierEstimator and a calculator class and produces HTML reports of the survival analysis results calculated,
+    in a representable, and easy to read format.
     ...
 
     Attributes
@@ -69,28 +76,15 @@ class ReportGenerator:
             }
         </style>
         <body><h1>
-                <p>Overview of the different Kaplan-Meier estimate associated with components from the """ + self.getDatabase().folder + """</p>
+                <p>Survival Analysis of components in: """ + self.getDatabase().folder + """</p>
             </h1>
         """
 
         for component in components:
-            text += """\n  <h2><p>Kaplan-Meier estimate associated with component: """ + component + """</p></h2>"""
+            text += """\n  <h2><p>Kaplan-Meier estimate: """ + component + """</p></h2>"""
             text += """\n  <img src=""" + """'KME_analysis/survival_analysis_""" + component + """.png' class="center">"""
         
         text += """\n </body> </html>"""
         
         f.write(text)
         f.close()
-
-def reportGeneratorRun():
-
-    database = DataBase('ReliabilityData')
-    database.createDatabase()
-    
-    KME = kaplanMeierEstimator('Vibration sensor', database)
-    calc = Calculator(KME)
-
-    reportGenerator = ReportGenerator(database, KME, calc)
-    reportGenerator.writeHTML()
-
-reportGeneratorRun()

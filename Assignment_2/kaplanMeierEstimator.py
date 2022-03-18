@@ -1,3 +1,12 @@
+'''
+Assignment 2 - TPK4186
+
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
+
 from manager import *
 from database import *
 import matplotlib.pyplot as plt
@@ -183,29 +192,3 @@ class Calculator:
         plt.savefig('KME_analysis/survival_analysis_'+ self.KME.getComponent()+".png")
         plt.savefig('KME_analysis/survival_analysis_'+ self.KME.getComponent()+".pdf")
         plt.show()
-
-
-
-def kmeCalcRun():
-
-    database = DataBase('ReliabilityData')
-    database.createDatabase()
-    components = database.getWorksheets().keys()
-    #print(components)
-
-    KME_components = []
-    calc_components = []
-
-    for component in components:
-        
-        KME_object = kaplanMeierEstimator(component, database)
-        KME_components.append(KME_object)
-
-        calc_object = Calculator(KME_object)
-        calc_object.preparePlotValues()
-        calc_components.append(calc_object)
-
-        calc_object.plotKME()
-        calc_object.exportKMEtofile()
-
-kmeCalcRun()

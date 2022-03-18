@@ -1,3 +1,11 @@
+'''
+Assignment 2 - TPK4186
+
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from manager import *
 import xlsxwriter
 
@@ -80,7 +88,7 @@ class Unit:
         return self.failureDate
 
     def setFailureDate(self, FailureDate):
-        self.FailureDate = FailureDate
+        self.failureDate = FailureDate
 
 # Task 4
 class DataBase:
@@ -177,14 +185,3 @@ class DataBase:
 
         print('worksheets: ', worksheets)
         workbook.close()
-
-database = DataBase('ReliabilityData')
-'''database.setUnitsFromExcel('ReliabilityData','Plant1.xlsx')
-worksheets = database.getWorksheets()
-print('Worksheets: ', worksheets)
-database.setUnitsFromExcel('ReliabilityData','Plant2.xlsx')
-worksheets = database.getWorksheets()
-print('Worksheets: ', worksheets)'''
-database.createDatabase()
-print(database.getWorksheets())
-database.printToExcel()

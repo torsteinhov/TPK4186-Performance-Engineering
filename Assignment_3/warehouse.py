@@ -38,7 +38,6 @@ class Warehouse:
             self.catalog.getProducts().append(product)
     
     def remove_product(self, product):
-
         # Takes a product and removes it from the catalog
         if product in self.catalog:
             self.catalog.getProducts().remove(product)
@@ -132,11 +131,11 @@ class Warehouse:
         top = []
         for i in range(1, x+1):
             if (i-3)%6 == 0:
-                top.append(Cell(x=i,y=(y/2)-1, type='route' , route='up'))
+                top.append(Cell(x=i,y=int((y/2)-1), type='route' , route='up'))
             elif (i-4)%6 == 0:
-                top.append(Cell(x=i,y=(y/2)-1, type='route' , route='down'))
+                top.append(Cell(x=i,y=int((y/2)-1), type='route' , route='down'))
             else:
-                top.append(Cell(x=i,y=(y/2)-1, type='loading'))
+                top.append(Cell(x=i,y=int((y/2)-1), type='loading'))
         
         layout.append(top)
 
@@ -144,9 +143,9 @@ class Warehouse:
         midtop = []
         for i in range(1, x+1):
             if i!=x and i!=x-1:
-                midtop.append(Cell(x=i,y=(y/2), type='route' , route='right'))
+                midtop.append(Cell(x=i,y=int(y/2), type='route' , route='right'))
             else:
-                midtop.append(Cell(x=i,y=(y/2), type='none'))
+                midtop.append(Cell(x=i,y=int(y/2), type='none'))
         
         layout.append(midtop)
 
@@ -154,9 +153,9 @@ class Warehouse:
         midbot = []
         for i in range(1, x+1):
             if i!=x and i!=x-1:
-                midbot.append(Cell(x=i,y=(y/2)+1, type='route' , route='left'))
+                midbot.append(Cell(x=i,y=int((y/2)+1), type='route' , route='left'))
             else:
-                midbot.append(Cell(x=i,y=(y/2)+1, type='none'))
+                midbot.append(Cell(x=i,y=int((y/2)+1), type='none'))
         
         layout.append(midbot)
         
@@ -164,11 +163,11 @@ class Warehouse:
         bot = []
         for i in range(1, x+1):
             if (i-3)%6 == 0:
-                bot.append(Cell(x=i,y=(y/2)+2, type='route' , route='down'))
+                bot.append(Cell(x=i,y=int((y/2)+2), type='route' , route='down'))
             elif (i-4)%6 == 0:
-                bot.append(Cell(x=i,y=(y/2)+2, type='route' , route='up'))
+                bot.append(Cell(x=i,y=int((y/2)+2), type='route' , route='up'))
             else:
-                bot.append(Cell(x=i,y=(y/2)+2, type='loading'))
+                bot.append(Cell(x=i,y=int((y/2)+2), type='loading'))
         
         layout.append(bot)
 
@@ -192,7 +191,7 @@ class Warehouse:
         for row in layout:
             print('\n')
             for cell in row:
-                print('x: ', cell.x, ' y: ', y, ' type: ', cell.type)
+                print('x: ', cell.x, ' y: ', cell.y, ' type: ', cell.type)
 
         return layout
     

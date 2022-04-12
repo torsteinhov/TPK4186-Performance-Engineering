@@ -21,9 +21,18 @@ class Warehouse:
         self.robots = robots
     
     def getCatalog(self):
+        return self.catalog
+    
+    def setCatalog(self, catalog):
+        self.catalog = catalog
+    
+    def getRobots(self):
+        return self.robots
+    
+    def setRobots(self, robots):
+        self.robots = robots
 
     def add_product(self, product):
-
         # Takes a product and adds it in the catalog
         if product not in self.catalog:
             self.catalog.getProducts().append(product)

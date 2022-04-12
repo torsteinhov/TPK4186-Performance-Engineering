@@ -106,11 +106,32 @@ class Delivery:
         
         return weight
     
+    def getDate(self):
+        return self.date
+    
+    def getProducts(self):
+        return self.products
+
+    def setProducts(self, products):
+        self.products = products
+    
 class Shelf:
 
     def __init__(self, product, amount):
         self.product = product
         # total weight can not exceed 100kg
+        self.amount = amount
+    
+    def getProduct(self):
+        return self.product
+    
+    def setProduct(self, product):
+        self.product = product
+    
+    def getAmount(self):
+        return self.amount
+    
+    def setAmount(self, amount):
         self.amount = amount
 
 class Cell:
@@ -122,6 +143,43 @@ class Cell:
         self.shelf1 = shelf1 # only for storage cells
         self.shelf2 = shelf2 # only for storage cells
         self.route = route # route direction for route cells
+    
+    def getX(self):
+        return self.x
+    
+    def setX(self, x):
+        self.x = x
+    
+    def getY(self):
+        return self.y
+    
+    def setY(self, y):
+        self.y = y
+    
+    def getType(self):
+        return self.type
+    
+    def setType(self, type):
+        self.type = type
+    
+    def getShelf1(self):
+        return self.shelf1
+    
+    def setShelf1(self, shelf1):
+        self.shelf1 = shelf1
+    
+    def getShelf2(self):
+        return self.shelf2
+    
+    def setShelf2(self, shelf2):
+        self.shelf2 = shelf2
+    
+    def getRoute(self):
+        return self.route
+    
+    def setRoute(self, route):
+        self.route = route
+
 
 class ClientOrder:
     pass # venter litt

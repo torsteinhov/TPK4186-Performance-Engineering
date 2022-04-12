@@ -19,6 +19,8 @@ class Warehouse:
     def __init__(self, catalog=None, robots=None):
         self.catalog = catalog
         self.robots = robots
+    
+    def getCatalog(self):
 
     def add_product(self, product):
 
@@ -182,7 +184,8 @@ class Warehouse:
             print('\n')
             for cell in row:
                 print('x: ', cell.x, ' y: ', y, ' type: ', cell.type)
-        #return layout
+
+        return layout
     
 '''    def addTopAisle(self, x, y):
         #topsection=[shelf,load,up,down,load,shelf]

@@ -91,19 +91,32 @@ class Warehouse:
         if y%2 != 0:
             raise ValueError("y(height) must be in pairs")
         
-
-        
         numberofsections=x/6
-        sectiondebt=(y-4)/2
-
-
+        sectiondebt=(y-4)//2
 
         layout = []
 
+        # top aisle
+        #topAisle = [[] for _ in range(sectiondebt)]
+
+        for j in range(1, sectiondebt+1):
+            topAisle = []
+            for i in range(1,x+1):
+                if (i-3)%6 == 0:
+                    topAisle.append(Cell(x=i,y=j, type='route' , route='up'))
+                elif (i-4)%6 == 0:
+                    topAisle.append(Cell(x=i,y=j, type='route' , route='down'))
+                elif (i-1)%6 == 0:
+                    topAisle.append(Cell(x=i,y=j, type='shelf'))
+                elif (i-6)%6 == 0:
+                    topAisle.append(Cell(x=i,y=j, type='shelf'))
+                else:
+                    topAisle.append(Cell(x=i,y=j, type='loading'))
+            
+            layout.append(topAisle)
+
         # Construct middle section
         
-        
-
         # top
         top = []
         for i in range(1, x+1):
@@ -116,7 +129,6 @@ class Warehouse:
         
         layout.append(top)
 
-        
         # midtop
         midtop = []
         for i in range(1, x+1):
@@ -126,7 +138,6 @@ class Warehouse:
                 midtop.append(Cell(x=i,y=(y/2), type='none'))
         
         layout.append(midtop)
-
 
         # midbot
         midbot = []
@@ -150,12 +161,27 @@ class Warehouse:
         
         layout.append(bot)
 
-
+        # bottom aisle
+        for j in range(1, sectiondebt+1):
+            botAisle = []
+            for i in range(1,x+1):
+                if (i-3)%6 == 0:
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='route' , route='down'))
+                elif (i-4)%6 == 0:
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='route' , route='up'))
+                elif (i-1)%6 == 0:
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='shelf'))
+                elif (i-6)%6 == 0:
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='shelf'))
+                else:
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='loading'))
+            
+            layout.append(botAisle)
 
         for row in layout:
             print('\n')
             for cell in row:
-                print(cell.type)
+                print('x: ', cell.x, ' y: ', y, ' type: ', cell.type)
         #return layout
     
 '''    def addTopAisle(self, x, y):

@@ -1,4 +1,5 @@
 from warehouse import Warehouse
+from data_models import Robot
 import numpy as np
 from tabulate import tabulate
 
@@ -34,13 +35,19 @@ class Printer:
     def printCatalog(self, catalog):
         print(catalog)
     
+    def printRobot(self, robot):
+        print(robot)
+    
 
 
 warehouse = Warehouse()
 catalog = warehouse.constructCatalog(120)
+products = catalog.getProducts()
+print(products)
+robot = Robot(1, (2,3), (5,5), products)
 warehouse.setCatalog(catalog)
+warehouse.setRobots(robot)
 printer = Printer(warehouse, 24, 16)
 printer.printWarehouseLayout()
 printer.printCatalog(warehouse.getCatalog())
-
-print("lol")
+printer.printRobot(warehouse.getRobots())

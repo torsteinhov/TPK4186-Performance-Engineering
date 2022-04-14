@@ -86,6 +86,16 @@ class Robot:
                 raise ValueError('The products are not the same type!')
 
         self.products = products
+    
+    def __str__(self):
+
+        string = 'Robot: ' + str(self.id) + ' current position: ' + str(self.getCurrPos()) + ' goal position: ' + str(self.getGoalPos()) + ' \n'
+
+        for product in self.products:
+            info = product.getSerialnr() + ' - ' + str(product.getWeight()) + 'kg \n'
+            string += info
+
+        return string
 
     def getCurrPos(self):
         return self.curr_pos

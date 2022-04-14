@@ -12,7 +12,7 @@ class Printer:
         
         for row in self.layout:
             print('\n')
-            
+
             for cell in row:
                 print('x: ', cell.x, ' y: ', cell.y, ' type: ', cell.type)
     
@@ -42,3 +42,5 @@ warehouse.setCatalog(catalog)
 printer = Printer(warehouse, 24, 16)
 printer.printWarehouseLayout()
 printer.printCatalog(warehouse.getCatalog())
+
+print("lol")

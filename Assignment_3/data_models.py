@@ -10,6 +10,7 @@ from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime
 from math import floor
+import numpy as np
 
 # Classes
 '''
@@ -54,7 +55,7 @@ class Catalog:
 
     def __str__(self):
 
-        string = 'The Catalog contains: \n'
+        string = 'The Catalog contains '+ str(len(self.products)) +' products: \n'
 
         for product in self.products:
             info = product.getSerialnr() + ' - ' + str(product.getWeight()) + 'kg \n'
@@ -71,8 +72,38 @@ class Catalog:
 class Robot:
     # Max 40kg, can carry products of only one type at a time.
 
-    def __init__(self):
-        pass
+    def __init__(self, id, curr_pos, goal_pos, products=None):
+        self.curr_pos = curr_pos #tuple (x,y)
+        self.goal_pos = goal_pos #tuple (x,y)
+        self.loadtime = 120
+        self.movetime = 10
+        self.id = id
+
+        # Make sure that all the products are of the same type.
+        type = product[0].getType()
+        for product in products:
+            if product.getType() != type:
+                raise ValueError('The products are not the same type!')
+
+        self.products = products
+
+    def getCurrPos(self):
+        return self.curr_pos
+    
+    def setCurrPos(self, curr_pos):
+        self.curr_pos = curr_pos
+    
+    def getGoalPos(self):
+        return self.goal_pos
+    
+    def setGoalPos(self, goal_pos):
+        self.goal_pos = goal_pos
+    
+    def getProducts(self):
+        return self.products
+    
+    def setProducts(self, products):
+        self.products = products
 
 class Delivery:
 

@@ -188,10 +188,6 @@ class Warehouse:
             
             layout.append(botAisle)
 
-        for row in layout:
-            print('\n')
-            for cell in row:
-                print('x: ', cell.x, ' y: ', cell.y, ' type: ', cell.type)
 
         return layout
     
@@ -206,10 +202,10 @@ class Warehouse:
 
 
 
-
+'''
 
 warehouse = Warehouse()
 print(warehouse.constructCatalog(120))
 catalog = warehouse.constructCatalog(120)
 print(warehouse.constructRandomTruckDelivery(catalog))
-print(warehouse.constructWarehouseLayout(24, 16))
+print(warehouse.constructWarehouseLayout(24, 16))'''

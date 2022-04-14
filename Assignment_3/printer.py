@@ -12,6 +12,7 @@ class Printer:
         
         for row in self.layout:
             print('\n')
+            
             for cell in row:
                 print('x: ', cell.x, ' y: ', cell.y, ' type: ', cell.type)
     

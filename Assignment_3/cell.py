@@ -6,13 +6,14 @@ import numpy as np
 
 class Cell:
 
-    def __init__(self, x, y, type, shelf1=None, shelf2=None, route=None):
+    def __init__(self, x, y, type, shelf1=None, shelf2=None, route=None, product_type=None):
         self.x = x
         self.y = y
         self.type = type
         self.shelf1 = shelf1 # only for storage cells
         self.shelf2 = shelf2 # only for storage cells
         self.route = route # route direction for route cells
+        self.product_type = product_type # only for storage cells
     
     def getX(self):
         return self.x

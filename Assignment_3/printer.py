@@ -15,9 +15,9 @@ from tabulate import tabulate
 
 class Printer:
 
-    def __init__(self, warehouse, x, y):
+    def __init__(self, warehouse):
         self.warehouse = warehouse
-        self.layout = warehouse.constructWarehouseLayout(x, y)
+        self.layout = warehouse.constructWarehouseLayout()
     
     def printWarehouseLayoutRAW(self):
         
@@ -48,16 +48,16 @@ class Printer:
     def printRobot(self, robot):
         print(robot)
     
+'''
 
-
-warehouse = Warehouse()
+warehouse = Warehouse(width=12, height=8)
 catalog = warehouse.constructCatalog(120)
 products = catalog.getProducts()
 #print(products)
 #robot = Robot(1, (2,3), (5,5), products)
 warehouse.setCatalog(catalog)
 #warehouse.setRobots(robot)
-printer = Printer(warehouse, 12, 8)
+printer = Printer(warehouse)
 printer.printWarehouseLayout()
 #printer.printCatalog(warehouse.getCatalog())
-#printer.printRobot(warehouse.getRobots())
+#printer.printRobot(warehouse.getRobots())'''

@@ -12,6 +12,7 @@ class Robot:
         self.loadtime = 120
         self.movetime = 10
         self.id = id
+        self.products = products
 
         # Make sure that all the products are of the same type.
         type = product[0].getType()
@@ -42,3 +43,6 @@ class Robot:
     
     def setProducts(self, products):
         self.products = products
+    
+    def loadRobot(self, delivery):
+        

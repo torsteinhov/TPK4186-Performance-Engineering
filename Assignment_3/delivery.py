@@ -13,7 +13,7 @@ class Delivery:
     
     def __str__(self):
 
-        string = 'Delivery: \n produced - ' + str(self.date)
+        string = 'Delivery: \n produced - ' + str(self.date) +'\n'
 
         for product, amount in self.products.items():
             info = product.serialnr + ' - ' + str(floor(amount)) + ' units\n'

@@ -18,9 +18,10 @@ import random
 
 class Warehouse:
 
-    def __init__(self, height, width, catalog=None, robots=None):
+    def __init__(self, height, width, catalog=None, robots=None, layout=None):
         self.catalog = catalog
         self.robots = robots
+        self.layout = layout
         self.height = height
         self.width = width
     
@@ -35,6 +36,12 @@ class Warehouse:
     
     def setRobots(self, robots):
         self.robots = robots
+    
+    def getLayout(self):
+        return self.layout
+    
+    def setLayout(self, layout):
+        self.layout = layout
 
     def getHeight(self):
         return self.height
@@ -71,27 +78,31 @@ class Warehouse:
             products.append(product)
         
         catalog = Catalog(products)
+        self.setCatalog(catalog)
         return catalog
 
-    def constructRandomTruckDeliverheight(self, catalog, mawidth_weight=20000):
+    def constructRandomDelivery(self, catalog):
 
+        truck_max = 20000
+        delivery_cap = min(self.getAmountOfStorageCells()*200, truck_max)
         products = {}
-        # We assume a random deliverheight containing between 5-10 different products.
-        # Creating a random deliverheight in itself does not make much sense, but we have tried to mimic its intentions.
-        n_products = random.randint(5,10)
+        # We assume a random delivery containing between 5-10 different products.
+        # Creating a random delivery in itself does not make much sense, but we have tried to mimic its intentions.
+        n_products = random.randint(10,20)
 
         # We also assume equal weight for each product
-        weight_per_product_theightpe = mawidth_weight/n_products
+        weight_per_product_type = delivery_cap/n_products
 
         for i in range(n_products):
             index = random.randint(0, len(catalog.getProducts())-1)
             product = catalog.getProducts()[index]
-            amount = floor(weight_per_product_theightpe/product.getWeight())
+            amount = floor(weight_per_product_type/product.getWeight())
 
             products[product] = amount
         
         delivery = Delivery(products)
         return delivery
+        
 
     def constructWarehouseLayout(self):
         
@@ -123,15 +134,15 @@ class Warehouse:
             topAisle = []
             for i in range(1,self.width+1):
                 if (i-3)%6 == 0:
-                    topAisle.append(Cell(width=i,height=j, theightpe='route' , route='up'))
+                    topAisle.append(Cell(x=i,y=j, type='route' , route='up'))
                 elif (i-4)%6 == 0:
-                    topAisle.append(Cell(width=i,height=j, theightpe='route' , route='down'))
+                    topAisle.append(Cell(x=i,y=j, type='route' , route='down'))
                 elif (i-1)%6 == 0:
-                    topAisle.append(Cell(width=i,height=j, theightpe='storage', shelf1=Shelf(), shelf2=Shelf()))
+                    topAisle.append(Cell(x=i,y=j, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 elif (i-6)%6 == 0:
-                    topAisle.append(Cell(width=i,height=j, theightpe='storage', shelf1=Shelf(), shelf2=Shelf()))
+                    topAisle.append(Cell(x=i,y=j, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 else:
-                    topAisle.append(Cell(width=i,height=j, theightpe='loading'))
+                    topAisle.append(Cell(x=i,y=j, type='loading'))
             
             layout.append(topAisle)
 
@@ -141,11 +152,11 @@ class Warehouse:
         top = []
         for i in range(1, self.width+1):
             if (i-3)%6 == 0:
-                top.append(Cell(width=i,height=int((self.height/2)-1), theightpe='route' , route='up'))
+                top.append(Cell(x=i,y=int((self.height/2)-1), type='route' , route='up'))
             elif (i-4)%6 == 0:
-                top.append(Cell(width=i,height=int((self.height/2)-1), theightpe='route' , route='down'))
+                top.append(Cell(x=i,y=int((self.height/2)-1), type='route' , route='down'))
             else:
-                top.append(Cell(width=i,height=int((self.height/2)-1), theightpe='loading'))
+                top.append(Cell(x=i,y=int((self.height/2)-1), type='loading'))
         
         layout.append(top)
 
@@ -153,9 +164,9 @@ class Warehouse:
         midtop = []
         for i in range(1, self.width+1):
             if i!=self.width and i!=self.width-1:
-                midtop.append(Cell(width=i,height=int(self.height/2), theightpe='route' , route='right'))
+                midtop.append(Cell(x=i,y=int(self.height/2), type='route' , route='right'))
             else:
-                midtop.append(Cell(width=i,height=int(self.height/2), theightpe='none'))
+                midtop.append(Cell(x=i,y=int(self.height/2), type='none'))
         
         layout.append(midtop)
 
@@ -163,21 +174,21 @@ class Warehouse:
         midbot = []
         for i in range(1, self.width+1):
             if i!=self.width and i!=self.width-1:
-                midbot.append(Cell(width=i,height=int((self.height/2)+1), theightpe='route' , route='left'))
+                midbot.append(Cell(x=i,y=int((self.height/2)+1), type='route' , route='left'))
             else:
-                midbot.append(Cell(width=i,height=int((self.height/2)+1), theightpe='none'))
+                midbot.append(Cell(x=i,y=int((self.height/2)+1), type='none'))
         
-        laheightout.append(midbot)
+        layout.append(midbot)
         
         # bot
         bot = []
         for i in range(1, self.width+1):
             if (i-3)%6 == 0:
-                bot.append(Cell(width=i,height=int((self.height/2)+2), theightpe='route' , route='down'))
+                bot.append(Cell(x=i,y=int((self.height/2)+2), type='route' , route='down'))
             elif (i-4)%6 == 0:
-                bot.append(Cell(width=i,height=int((self.height/2)+2), theightpe='route' , route='up'))
+                bot.append(Cell(x=i,y=int((self.height/2)+2), type='route' , route='up'))
             else:
-                bot.append(Cell(width=i,height=int((self.height/2)+2), theightpe='loading'))
+                bot.append(Cell(x=i,y=int((self.height/2)+2), type='loading'))
         
         layout.append(bot)
 
@@ -186,17 +197,39 @@ class Warehouse:
             botAisle = []
             for i in range(1,self.width+1):
                 if (i-3)%6 == 0:
-                    botAisle.append(Cell(width=i,height=j+sectiondebt+4, theightpe='route' , route='down'))
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='route' , route='down'))
                 elif (i-4)%6 == 0:
-                    botAisle.append(Cell(width=i,height=j+sectiondebt+4, theightpe='route' , route='up'))
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='route' , route='up'))
                 elif (i-1)%6 == 0:
-                    botAisle.append(Cell(width=i,height=j+sectiondebt+4, theightpe='storage', shelf1=Shelf(), shelf2=Shelf()))
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 elif (i-6)%6 == 0:
-                    botAisle.append(Cell(width=i,height=j+sectiondebt+4, theightpe='storage', shelf1=Shelf(), shelf2=Shelf()))
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 else:
-                    botAisle.append(Cell(width=i,height=j+sectiondebt+4, theightpe='loading'))
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='loading'))
             
             layout.append(botAisle)
 
-
+        self.setLayout(layout)
         return layout
+    
+    def getAmountOfStorageCells(self):
+
+        storagecells = 0
+
+        for row in self.layout:
+            for cell in row:
+                if cell.getType() == 'storage':
+                    storagecells += 1
+        
+        return storagecells
+    
+    def assignShelves2ProductTypes(self):
+        
+        serialNrCount = 0
+        for row in self.layout:
+            for cell in row:
+                if cell.getType() == 'storage':
+                    cell.shelf1.setProductSerialNr(self.getCatalog().getProducts()[serialNrCount].getSerialnr())
+                    cell.shelf2.setProductSerialNr(self.getCatalog().getProducts()[serialNrCount+1].getSerialnr())
+                    serialNrCount += 2
+        

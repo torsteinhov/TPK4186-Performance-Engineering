@@ -6,8 +6,10 @@ import numpy as np
 
 class Shelf:
 
-    def __init__(self, products=None):
-        
+    def __init__(self, productSerialNr = None, products=None):
+
+        # Each shelf can only contain one type of product, identified with serialNr
+        self.productSerialNr = productSerialNr
         self.products = products
         self.max_weight = 100
         self.shelf_weight = 0
@@ -25,3 +27,9 @@ class Shelf:
     
     def getMax_weight(self):
         return self.max_weight
+    
+    def getProductSerialNr(self):
+        return self.productSerialNr
+    
+    def setProductSerialNr(self, productSerialNr):
+        self.productSerialNr = productSerialNr

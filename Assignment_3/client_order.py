@@ -5,4 +5,7 @@ from math import floor
 import numpy as np
 
 class ClientOrder:
-    pass # venter litt
+    
+    def __init__(self, order):
+        self.order = order # [product, amount]
+    

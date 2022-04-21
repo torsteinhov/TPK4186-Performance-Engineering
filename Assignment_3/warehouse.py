@@ -7,7 +7,11 @@ Simen Eger Heggelund
 '''
 
 from email.errors import MissingHeaderBodySeparatorDefect
-from data_models import Catalog, Cell, Product, Delivery
+from catalog import *
+from cell import *
+from product import *
+from delivery import *
+from shelf import *
 from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime
@@ -117,9 +121,9 @@ class Warehouse:
                 elif (i-4)%6 == 0:
                     topAisle.append(Cell(x=i,y=j, type='route' , route='down'))
                 elif (i-1)%6 == 0:
-                    topAisle.append(Cell(x=i,y=j, type='shelf'))
+                    topAisle.append(Cell(x=i,y=j, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 elif (i-6)%6 == 0:
-                    topAisle.append(Cell(x=i,y=j, type='shelf'))
+                    topAisle.append(Cell(x=i,y=j, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 else:
                     topAisle.append(Cell(x=i,y=j, type='loading'))
             
@@ -180,9 +184,9 @@ class Warehouse:
                 elif (i-4)%6 == 0:
                     botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='route' , route='up'))
                 elif (i-1)%6 == 0:
-                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='shelf'))
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 elif (i-6)%6 == 0:
-                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='shelf'))
+                    botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='storage', shelf1=Shelf(), shelf2=Shelf()))
                 else:
                     botAisle.append(Cell(x=i,y=j+sectiondebt+4, type='loading'))
             
@@ -190,23 +194,3 @@ class Warehouse:
 
 
         return layout
-    
-'''    def addTopAisle(self, x, y):
-        #topsection=[shelf,load,up,down,load,shelf]
-        newTopAisle = [Cell(x, y, type='shelf'), ]
-    
-    def addBottomAisle(self):
-
-    def addMidAisle(self):'''
-
-
-
-
-'''
-
-warehouse = Warehouse()
-print(warehouse.constructCatalog(120))
-catalog = warehouse.constructCatalog(120)
-print(warehouse.constructRandomTruckDelivery(catalog))
-print(warehouse.constructWarehouseLayout(24, 16))'''
-#

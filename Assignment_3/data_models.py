@@ -1,4 +1,4 @@
-# This file contains data models for the simulation of the warehouse, and their functionalities
+'''# This file contains data models for the simulation of the warehouse, and their functionalities
 
 '''
 Torstein Heltne Hovde
@@ -73,8 +73,7 @@ class Robot:
     # Max 40kg, can carry products of only one type at a time.
 
     def __init__(self, id, curr_pos, goal_pos, products=None):
-        self.curr_pos = curr_pos #tuple (x,y)
-        self.goal_pos = goal_pos #tuple (x,y)
+        self.route = None # A list with tuples of the coordinates with its projected path
         self.loadtime = 120
         self.movetime = 10
         self.id = id
@@ -97,17 +96,11 @@ class Robot:
 
         return string
 
-    def getCurrPos(self):
-        return self.curr_pos
+    def getRoute(self):
+        return self.route
     
-    def setCurrPos(self, curr_pos):
-        self.curr_pos = curr_pos
-    
-    def getGoalPos(self):
-        return self.goal_pos
-    
-    def setGoalPos(self, goal_pos):
-        self.goal_pos = goal_pos
+    def setRoute(self, route):
+        self.route = route
     
     def getProducts(self):
         return self.products
@@ -156,24 +149,6 @@ class Delivery:
     def setProducts(self, products):
         self.products = products
     
-class Shelf:
-
-    def __init__(self, product, amount):
-        self.product = product
-        # total weight can not exceed 100kg
-        self.amount = amount
-    
-    def getProduct(self):
-        return self.product
-    
-    def setProduct(self, product):
-        self.product = product
-    
-    def getAmount(self):
-        return self.amount
-    
-    def setAmount(self, amount):
-        self.amount = amount
 
 class Cell:
 
@@ -221,6 +196,29 @@ class Cell:
     def setRoute(self, route):
         self.route = route
 
+class Shelf:
+
+    def __init__(self, products=None):
+        
+        self.products = products
+        self.max_weight = 100
+        self.shelf_weight = 0
+
+    def getShelfWeight(self):
+
+        for product in self.products:
+
+            self.shelf_weight += product.getWeight()
+
+        return self.shelf_weight
+
+    def getProducts(self):
+        return self.products
+    
+    def getMax_weight(self):
+        return self.max_weight
+
+
 
 class ClientOrder:
-    pass # venter litt
+    pass # venter litt'''

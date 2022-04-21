@@ -1,5 +1,15 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from warehouse import Warehouse
-from data_models import Robot
+from catalog import *
+from cell import *
+from product import *
+from delivery import *
+from shelf import *
 import numpy as np
 from tabulate import tabulate
 
@@ -43,11 +53,11 @@ class Printer:
 warehouse = Warehouse()
 catalog = warehouse.constructCatalog(120)
 products = catalog.getProducts()
-print(products)
-robot = Robot(1, (2,3), (5,5), products)
+#print(products)
+#robot = Robot(1, (2,3), (5,5), products)
 warehouse.setCatalog(catalog)
-warehouse.setRobots(robot)
-printer = Printer(warehouse, 24, 16)
+#warehouse.setRobots(robot)
+printer = Printer(warehouse, 12, 8)
 printer.printWarehouseLayout()
-printer.printCatalog(warehouse.getCatalog())
-printer.printRobot(warehouse.getRobots())
+#printer.printCatalog(warehouse.getCatalog())
+#printer.printRobot(warehouse.getRobots())

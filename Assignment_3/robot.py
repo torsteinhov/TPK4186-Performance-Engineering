@@ -11,6 +11,8 @@ class Robot:
 
     def __init__(self, id, products=None):
         self.route = None # A 2D list of the coordinates with its projected path
+        self.curr_pos = None
+        self.next_pos = None
         self.loadtime = 120
         self.movetime = 10
         self.id = id
@@ -20,11 +22,12 @@ class Robot:
         if self.route == None:
             self.isAvailable = True
 
-        # Make sure that all the products are of the same type.
-        type = product[0].getType()
+        self.type = None
+        # This will never happen, taken care of in warehouse
+        '''type = product[0].getType()
         for product in products:
             if product.getType() != type:
-                raise ValueError('The products are not the same type!')
+                raise ValueError('The products are not the same type!')'''
 
         self.products = products
     
@@ -53,12 +56,24 @@ class Robot:
     def setProducts(self, products):
         self.products = products
     
+    def getCurrPos(self):
+        return self.curr_pos
+    
+    def setCurrPos(self, curr_pos):
+        self.curr_pos = curr_pos
+    
+    def getNextPos(self):
+        return self.next_pos
+    
+    def setNextPos(self, next_pos):
+        self.next_pos = next_pos
+    
     def isRobotAvailable(self):
         return self.isAvailable
     
     def loadRobot(self, serialNr, amount):
         
-        self.setProducts({serialNr, amount})
+        self.setProducts([serialNr, amount])
 
     def moveRobot(self, goal):
         # goal is in the format [x,y] of the goal position

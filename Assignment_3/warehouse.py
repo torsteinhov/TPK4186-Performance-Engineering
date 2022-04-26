@@ -19,7 +19,7 @@ from tabulate import tabulate
 
 class Warehouse:
 
-    def __init__(self, height, width, catalog=None, robots=None, layout=None, warehouseQueue=[]):
+    def __init__(self, height, width, catalog=None, robots=[], layout=None, warehouseQueue=[]):
         self.catalog = catalog
         self.robots = robots
         self.layout = layout
@@ -36,8 +36,8 @@ class Warehouse:
     def getRobots(self):
         return self.robots
     
-    def setRobots(self, robots):
-        self.robots = robots
+    def addRobot(self, robot):
+        self.robots.append(robot)
     
     def getLayout(self):
         return self.layout
@@ -59,7 +59,7 @@ class Warehouse:
     
     def add2WarehouseQueue(self, delivery):
         #self.warehouseQueue.update(delivery)
-        for product, amount in delivery.items():
+        for product, amount in delivery.getProducts().items():
             delivery_list = [product, amount]
             self.getWarehouseQueue().append(delivery_list)
 
@@ -289,13 +289,54 @@ class Warehouse:
     def loadRobotFromQueue(self):
         robot = self.getAvailableRobot()
         loading_delivery = self.warehouseQueue[0]
+        #print(f'Loading delivery: {loading_delivery}')
 
         product_weight = loading_delivery[0].getWeight()
         cap_robot_products = floor(robot.getMaxCarry()/product_weight)
 
         if loading_delivery[1] > cap_robot_products:
             loading_delivery[1] -= cap_robot_products
-            robot.loadRobot(loading_delivery[0].getSerialNr(), cap_robot_products)
+            robot.loadRobot(loading_delivery[0].getSerialnr(), cap_robot_products)
         else:
             self.warehouseQueue.pop(0)
-            robot.loadRobot(loading_delivery[0].getSerialNr(), loading_delivery[1])
+            robot.loadRobot(loading_delivery[0].getSerialnr(), loading_delivery[1])
+        
+    def findGoalCellLoading(self, product):
+        
+        x, y = 0,0
+        for row in self.layout:
+            for cell in row:
+                if cell.getType() == 'storage':
+                    if cell.getShelf1().getProductSerialNr() == product[0]:
+                        x = cell.getX()
+                        y = cell.getY()
+                    elif cell.getShelf2().getProductSerialNr() == product[0]:
+                        x = cell.getX()
+                        y = cell.getY()
+
+        return [x,y]
+    
+    def calculateRouteFromDelivery2Storage(self, product):
+
+        route = []
+        goal = self.findGoalCellLoading(product)
+        start_y = int(len(self.layout)/2)
+
+
+        for i in range(6, len(self.layout[0])+1, 6):
+            if goal[0] <= i:
+                stop_x = i-3
+                break
+
+        for x in range(1, stop_x+1):
+            route.append([x, start_y])
+        
+        if goal[1] < start_y:
+            for i in range(start_y-1, goal[1]+1, -1):
+                route.append([stop_x, i])
+        else:
+            for i in range(start_y+1, goal[1]+1, 1):
+                route.append([stop_x, i])
+        
+        return route
+

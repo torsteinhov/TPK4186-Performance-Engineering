@@ -18,7 +18,7 @@ from tabulate import tabulate
 
 # handles the operation of the warehouse
 
-warehouse = Warehouse(height=30,width=24)
+warehouse = Warehouse(height=16,width=24)
 warehouse.constructWarehouseLayout()
 printer = Printer(warehouse)
 printer.printWarehouseLayout()
@@ -50,8 +50,13 @@ warehouse.printWarehouseStatus()
 
 # Creating a robot
 robot1 = Robot('XX-1')
-robot1.loadRobot(delivery[0])
+warehouse.addRobot(robot1)
+warehouse.loadRobotFromQueue()
 
+print(f'The robot contains: {robot1.getProducts()}')
+print(f'This cell has coordinates: {warehouse.getLayout()[0][0].getX()}')
+
+print(warehouse.calculateRouteFromDelivery2Storage(robot1.getProducts()))
 
 '''# Initalizing a second delivery
 # Inserting new products in the list of products delivered to the warehouse

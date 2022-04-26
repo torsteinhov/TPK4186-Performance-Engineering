@@ -9,3 +9,4 @@ class ClientOrder:
     def __init__(self, order):
         self.order = order # [product, amount]
     
+    

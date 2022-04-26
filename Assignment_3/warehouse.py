@@ -14,16 +14,18 @@ from shelf import *
 from numpy import product
 from datetime import datetime
 from math import floor 
-import random   
+import random
+from tabulate import tabulate
 
 class Warehouse:
 
-    def __init__(self, height, width, catalog=None, robots=None, layout=None):
+    def __init__(self, height, width, catalog=None, robots=None, layout=None, warehouseQueue=[]):
         self.catalog = catalog
         self.robots = robots
         self.layout = layout
         self.height = height
         self.width = width
+        self.warehouseQueue = warehouseQueue
     
     def getCatalog(self):
         return self.catalog
@@ -48,6 +50,18 @@ class Warehouse:
     
     def getWidth(self):
         return self.width
+    
+    def getWarehouseQueue(self):
+        return self.warehouseQueue
+    
+    def setWarehouseQueue(self, warehouseQueue):
+        self.warehouseQueue = warehouseQueue
+    
+    def add2WarehouseQueue(self, delivery):
+        #self.warehouseQueue.update(delivery)
+        for product, amount in delivery.items():
+            delivery_list = [product, amount]
+            self.getWarehouseQueue().append(delivery_list)
 
     def add_product(self, product):
         # Takes a product and adds it in the catalog
@@ -87,18 +101,29 @@ class Warehouse:
         delivery_cap = min(self.getAmountOfStorageCells()*200, truck_max)
         products = {}
         # We assume a random delivery containing between 5-10 different products.
+        # We also assume that each 
         # Creating a random delivery in itself does not make much sense, but we have tried to mimic its intentions.
         n_products = random.randint(10,20)
 
         # We also assume equal weight for each product
-        weight_per_product_type = delivery_cap/n_products
+        weight_per_product_type = 100
 
+        delivery_weight = 0
         for i in range(n_products):
-            index = random.randint(0, len(catalog.getProducts())-1)
-            product = catalog.getProducts()[index]
-            amount = floor(weight_per_product_type/product.getWeight())
+            
+            # We need to make sure that the weight of the delivery does not exceed the maximum capacity of the warehouse and the truck
+            # This relates mostly to products of heavy weight.
+            if delivery_weight > delivery_cap:
+                break
 
-            products[product] = amount
+            else:
+                index = random.randint(0, len(catalog.getProducts())-1)
+                product = catalog.getProducts()[index]
+                
+                amount = floor(weight_per_product_type/product.getWeight())
+
+                products[product] = amount
+                delivery_weight += product.getWeight()
         
         delivery = Delivery(products)
         return delivery
@@ -232,4 +257,45 @@ class Warehouse:
                     cell.shelf1.setProductSerialNr(self.getCatalog().getProducts()[serialNrCount].getSerialnr())
                     cell.shelf2.setProductSerialNr(self.getCatalog().getProducts()[serialNrCount+1].getSerialnr())
                     serialNrCount += 2
+    
+    def printWarehouseStatus(self):
         
+        grid = []
+        for row in self.layout:
+            row_grid = []
+            for cell in row:
+                if cell.getContainRobot() == True:
+                    row_grid.append('웃')
+                elif cell.getType() == 'route':
+                    row_grid.append('')
+                elif cell.getType() == 'loading':
+                    row_grid.append('-')
+                elif cell.getType() == 'storage':
+                    row_grid.append('S')
+            
+            grid.append(row_grid)
+        
+        print(tabulate(grid, tablefmt='fancy_grid'))
+    
+    def getAvailableRobot(self):
+        for robot in self.robots:
+            if robot.isRobotAvailable():
+                return robot
+        
+        print('No available robots!')
+
+    # We take a product from the warehouse queue, which is loaded from deliveries and load our robot with the products,
+    # the warehouse queue is then updated.
+    def loadRobotFromQueue(self):
+        robot = self.getAvailableRobot()
+        loading_delivery = self.warehouseQueue[0]
+
+        product_weight = loading_delivery[0].getWeight()
+        cap_robot_products = floor(robot.getMaxCarry()/product_weight)
+
+        if loading_delivery[1] > cap_robot_products:
+            loading_delivery[1] -= cap_robot_products
+            robot.loadRobot(loading_delivery[0].getSerialNr(), cap_robot_products)
+        else:
+            self.warehouseQueue.pop(0)
+            robot.loadRobot(loading_delivery[0].getSerialNr(), loading_delivery[1])

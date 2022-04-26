@@ -4,15 +4,21 @@ from datetime import datetime
 from math import floor
 import numpy as np
 
+from product import Product
+
 class Robot:
     # Max 40kg, can carry products of only one type at a time.
 
-    def __init__(self, id, curr_pos, goal_pos, products=None):
-        self.route = None # A list with tuples of the coordinates with its projected path
+    def __init__(self, id, products=None):
+        self.route = None # A 2D list of the coordinates with its projected path
         self.loadtime = 120
         self.movetime = 10
         self.id = id
-        self.products = products
+        self.products = products # dictionary {serialNr: amount}
+        self.maxCarry = 40
+
+        if self.route == None:
+            self.isAvailable = True
 
         # Make sure that all the products are of the same type.
         type = product[0].getType()
@@ -41,8 +47,20 @@ class Robot:
     def getProducts(self):
         return self.products
     
+    def getMaxCarry(self):
+        return self.maxCarry
+    
     def setProducts(self, products):
         self.products = products
     
-    def loadRobot(self, delivery):
+    def isRobotAvailable(self):
+        return self.isAvailable
+    
+    def loadRobot(self, serialNr, amount):
         
+        self.setProducts({serialNr, amount})
+
+    def moveRobot(self, goal):
+        # goal is in the format [x,y] of the goal position
+
+        self.route[-1] = goal

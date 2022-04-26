@@ -6,7 +6,7 @@ import numpy as np
 
 class Cell:
 
-    def __init__(self, x, y, type, shelf1=None, shelf2=None, route=None, product_type=None):
+    def __init__(self, x, y, type, shelf1=None, shelf2=None, route=None, product_type=None, containRobot=False):
         self.x = x
         self.y = y
         self.type = type
@@ -14,6 +14,7 @@ class Cell:
         self.shelf2 = shelf2 # only for storage cells
         self.route = route # route direction for route cells
         self.product_type = product_type # only for storage cells
+        self.containRobot = containRobot
     
     def getX(self):
         return self.x
@@ -50,3 +51,9 @@ class Cell:
     
     def setRoute(self, route):
         self.route = route
+    
+    def getContainRobot(self):
+        return self.containRobot
+    
+    def setContainRobot(self, containRobot):
+        self.containRobot = containRobot

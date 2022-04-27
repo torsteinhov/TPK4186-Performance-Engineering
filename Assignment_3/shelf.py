@@ -6,7 +6,7 @@ import numpy as np
 
 class Shelf:
 
-    def __init__(self, productSerialNr = None, amount=None):
+    def __init__(self, productSerialNr = None, amount=0):
 
         # Each shelf can only contain one type of product, identified with serialNr
         self.productSerialNr = productSerialNr

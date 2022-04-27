@@ -357,12 +357,13 @@ class Warehouse:
 
         # Calculates the start cell, which is the loading cell to the shelf that corresponds with the product the robot holds.
         start = self.findGoalCellLoading(product)
+        print('START[0]: ',start[0])
 
         end_y = int(len(self.layout)/2)+1
         route = []
 
         # Route from loading cell to transportation cell
-        if start[0]-1 % 6 == 0:
+        if ((start[0]-1)%6) == 0:
             route.append([start[0]+2, start[1]])
             route.append([start[0]+3, start[1]])
         else:
@@ -381,6 +382,3 @@ class Warehouse:
             route.append([i, route[-1][1]])
         
         return route
-    
-
-

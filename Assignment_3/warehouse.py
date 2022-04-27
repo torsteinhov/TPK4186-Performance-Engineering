@@ -289,8 +289,6 @@ class Warehouse:
     def loadRobotFromQueue(self):
         robot = self.getAvailableRobot()
         loading_delivery = self.warehouseQueue[0]
-        #print(f'Loading delivery: {loading_delivery}')
-
         product_weight = loading_delivery[0].getWeight()
         cap_robot_products = floor(robot.getMaxCarry()/product_weight)
 
@@ -322,7 +320,6 @@ class Warehouse:
         route = []
         goal = self.findGoalCellLoading(product)
         start_y = int(len(self.layout)/2)
-        print('The goal cell is: ', goal)
 
         # Find the amount of moves along the x-axis
         for i in range(6, len(self.layout[0])+1, 6):
@@ -357,8 +354,6 @@ class Warehouse:
 
         # Calculates the start cell, which is the loading cell to the shelf that corresponds with the product the robot holds.
         start = self.findGoalCellLoading(product)
-        print('START[0]: ',start[0])
-
         end_y = int(len(self.layout)/2)+1
         route = []
 

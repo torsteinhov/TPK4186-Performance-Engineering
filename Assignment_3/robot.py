@@ -15,6 +15,8 @@ class Robot:
         self.curr_pos = None
         self.next_pos = None
         self.goal_pos = None
+        self.goingHome = False
+        self.going2Shelf = False
         self.loadtime = 120
         self.movetime = 10
         self.id = id
@@ -45,6 +47,18 @@ class Robot:
 
     def getId(self):
         return self.id
+    
+    def getGoingHome(self):
+        return self.goingHome
+    
+    def setGoingHome(self, goingHome):
+        self.goingHome = goingHome
+    
+    def getGoing2Shelf(self):
+        return self.going2Shelf
+    
+    def setGoing2Shelf(self, going2Shelf):
+        self.going2Shelf = going2Shelf
     
     def getRoute(self):
         return self.route

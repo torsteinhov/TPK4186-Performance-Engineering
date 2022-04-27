@@ -254,8 +254,8 @@ class Warehouse:
         for row in self.layout:
             for cell in row:
                 if cell.getType() == 'storage':
-                    cell.shelf1.setProductSerialNr(self.getCatalog().getProducts()[serialNrCount].getSerialnr())
-                    cell.shelf2.setProductSerialNr(self.getCatalog().getProducts()[serialNrCount+1].getSerialnr())
+                    cell.shelf1.setProductSerialNr(str(self.getCatalog().getProducts()[serialNrCount].getSerialnr()))
+                    cell.shelf2.setProductSerialNr(str(self.getCatalog().getProducts()[serialNrCount+1].getSerialnr()))
                     serialNrCount += 2
     
     def printWarehouseStatus(self):
@@ -300,7 +300,8 @@ class Warehouse:
         else:
             self.warehouseQueue.pop(0)
             robot.loadRobot(loading_delivery[0].getSerialnr(), loading_delivery[1])
-        
+    
+    # Finds the shelf for the specific product in the warehouse
     def findGoalCellLoading(self, product):
         
         x, y = 0,0
@@ -321,22 +322,65 @@ class Warehouse:
         route = []
         goal = self.findGoalCellLoading(product)
         start_y = int(len(self.layout)/2)
+        print('The goal cell is: ', goal)
 
-
+        # Find the amount of moves along the x-axis
         for i in range(6, len(self.layout[0])+1, 6):
             if goal[0] <= i:
                 stop_x = i-3
+                # Add the moves to the route
+                for x in range(1, stop_x+1):
+                    route.append([x, start_y])
                 break
-
-        for x in range(1, stop_x+1):
-            route.append([x, start_y])
         
+        
+        # Find the amount of moves along the y-axis and add the moves to the route
         if goal[1] < start_y:
-            for i in range(start_y-1, goal[1]+1, -1):
+            for i in range(start_y-1, goal[1]-1, -1):
                 route.append([stop_x, i])
         else:
             for i in range(start_y+1, goal[1]+1, 1):
                 route.append([stop_x, i])
         
+        # Move from the transportation cells in to the loading cell
+        if goal[0] < route[-1][0]:
+            route.append([route[-1][0]-1, route[-1][1]])
+        else:
+            route.append([route[-1][0]+1, route[-1][1]])
+            route.append([route[-1][0]+1, route[-1][1]])
+
+        
         return route
+    
+    def calculateRouteHome(self, product):
+        # start = [x,y]
+
+        # Calculates the start cell, which is the loading cell to the shelf that corresponds with the product the robot holds.
+        start = self.findGoalCellLoading(product)
+
+        end_y = int(len(self.layout)/2)+1
+        route = []
+
+        # Route from loading cell to transportation cell
+        if start[0]-1 % 6 == 0:
+            route.append([start[0]+2, start[1]])
+            route.append([start[0]+3, start[1]])
+        else:
+            route.append([start[0]-2, start[1]])
+        
+        # Route from storage aisle to mid aisle
+        if start[1] < end_y:
+            for i in range(start[1]+1, end_y+1, 1):
+                route.append([route[-1][0], i])
+        else:
+            for i in range(start[1]-1, end_y-1, -1):
+                route.append([route[-1][0], i])
+        
+        # Route from mid aisle to home
+        for i in range(route[-1][0]-1, -1, -1):
+            route.append([i, route[-1][1]])
+        
+        return route
+    
+
 

@@ -21,9 +21,12 @@ class Shelf:
             self.shelf_weight += product.getWeight()
 
         return self.shelf_weight
-
-    def getProducts(self):
-        return self.products
+    
+    def getAmount(self):
+        return self.amount
+    
+    def setAmount(self, amount):
+        self.amount = amount
     
     def getMax_weight(self):
         return self.max_weight

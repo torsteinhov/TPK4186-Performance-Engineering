@@ -50,7 +50,7 @@ print('\n')
 warehouse.add2WarehouseQueue(delivery)
 
 # Creating a robot
-robots = warehouse.createRobots(4)
+robots = warehouse.createRobots(3)
 warehouse.addRobots(robots)
 warehouse.loadRobotFromQueue()
 

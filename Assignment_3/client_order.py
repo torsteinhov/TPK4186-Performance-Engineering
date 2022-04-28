@@ -9,7 +9,7 @@ class ClientOrder:
     def __init__(self, order):
 
         self.date = datetime.today()
-        self.order = order # [product, product, ...]'
+        self.order = order # {product: amount}
     
     def __str__(self):
 

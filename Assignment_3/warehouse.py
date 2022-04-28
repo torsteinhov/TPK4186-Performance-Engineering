@@ -8,10 +8,12 @@ Simen Eger Heggelund
 
 from catalog import *
 from cell import *
+from client_order import ClientOrder
 from product import *
 from delivery import *
 from shelf import *
 from numpy import product
+from robot import *
 from datetime import datetime
 from math import floor 
 import random
@@ -19,13 +21,14 @@ from tabulate import tabulate
 
 class Warehouse:
 
-    def __init__(self, height, width, catalog=None, robots=[], layout=None, warehouseQueue=[]):
+    def __init__(self, height, width, catalog=None, robots=[], layout=None, warehouseQueue=[], clientOrderQueue=[]):
         self.catalog = catalog
         self.robots = robots
         self.layout = layout
         self.height = height
         self.width = width
         self.warehouseQueue = warehouseQueue
+        self.clientOrderQueue = clientOrderQueue
     
     def getCatalog(self):
         return self.catalog
@@ -36,8 +39,9 @@ class Warehouse:
     def getRobots(self):
         return self.robots
     
-    def addRobot(self, robot):
-        self.robots.append(robot)
+    def addRobots(self, robots):
+        for robot in robots:
+            self.robots.append(robot)
     
     def getLayout(self):
         return self.layout
@@ -57,11 +61,25 @@ class Warehouse:
     def setWarehouseQueue(self, warehouseQueue):
         self.warehouseQueue = warehouseQueue
     
+    def getClientOrderQueue(self):
+        return self.clientOrderQueue
+    
+    def setClientOrderQueue(self, clientOrderQueue):
+        self.clientOrderQueue = clientOrderQueue
+    
     def add2WarehouseQueue(self, delivery):
-        #self.warehouseQueue.update(delivery)
+
+        # Iterates through the delivery dictionary to add products to the queue for loading
         for product, amount in delivery.getProducts().items():
             delivery_list = [product, amount]
             self.getWarehouseQueue().append(delivery_list)
+    
+    def add2ClientOrderQueue(self, clientOrder):
+
+        # Iterates through the client order dictionary to add products to the queue for retrieving
+        for product, amount in clientOrder.getOrder().items():
+            clientOrder_list = [product, amount]
+            self.getClientOrderQueue().append(clientOrder_list)
 
     def add_product(self, product):
         # Takes a product and adds it in the catalog
@@ -110,6 +128,7 @@ class Warehouse:
 
         delivery_weight = 0
         for i in range(n_products):
+
             
             # We need to make sure that the weight of the delivery does not exceed the maximum capacity of the warehouse and the truck
             # This relates mostly to products of heavy weight.
@@ -127,6 +146,44 @@ class Warehouse:
         
         delivery = Delivery(products)
         return delivery
+    
+    def constructRandomClientOrder(self, catalog):
+
+        # Set the warehouse cap to be amount of storage cells * 200 (2 shelves * 100 kg)
+        warehouse_cap = self.getAmountOfStorageCells()*200
+        products = {}
+
+        n_products = random.randint(3,8)
+
+        order_weight = 0
+        while len(products) < n_products:
+
+            weight_per_product_type = random.randint(20, 100)
+            existInWarehouse = False
+            
+            # We need to make sure that the weight of the client order does not exceed the maximum capacity of the warehouse
+            # This relates mostly to products of heavy weight.
+            if order_weight > warehouse_cap:
+                break
+
+            else:
+                index = random.randint(0, len(catalog.getProducts())-1)
+                product = catalog.getProducts()[index]
+                
+                amount = floor(weight_per_product_type/product.getWeight())
+
+                for row in self.getLayout():
+                    for cell in row:
+                        if cell.getType() == 'storage':
+                            if cell.getShelf1().getProductSerialNr() == product.getSerialnr() or cell.getShelf2().getProductSerialNr() == product.getSerialnr():
+                                existInWarehouse = True
+
+                if existInWarehouse:
+                    products[product] = amount
+                    order_weight += product.getWeight()
+        
+        order = ClientOrder(products)
+        return order
         
 
     def constructWarehouseLayout(self):
@@ -267,9 +324,9 @@ class Warehouse:
                 if cell.getContainRobot() == True:
                     row_grid.append('웃')
                 elif cell.getType() == 'route':
-                    row_grid.append('')
+                    row_grid.append('  ')
                 elif cell.getType() == 'loading':
-                    row_grid.append('-')
+                    row_grid.append(' -')
                 elif cell.getType() == 'storage':
                     row_grid.append('S')
             
@@ -346,14 +403,16 @@ class Warehouse:
             route.append([route[-1][0]+1, route[-1][1]])
             route.append([route[-1][0]+1, route[-1][1]])
 
-        
+        # Need to add 12 times the last route to simulate that loading takes 120 seconds.
+        for i in range(12):
+            route.append(route[-1])
+
         return route
     
-    def calculateRouteHome(self, product):
+    def calculateRouteHome(self, start):
         # start = [x,y]
 
         # Calculates the start cell, which is the loading cell to the shelf that corresponds with the product the robot holds.
-        start = self.findGoalCellLoading(product)
         end_y = int(len(self.layout)/2)+1
         route = []
 
@@ -377,3 +436,12 @@ class Warehouse:
             route.append([i, route[-1][1]])
         
         return route
+    
+    def createRobots(self, n_robots):
+
+        robots = []
+        for i in range(1, n_robots+1):
+            id = 'XX-'+str(i)
+            robots.append(Robot(id))
+
+        return robots

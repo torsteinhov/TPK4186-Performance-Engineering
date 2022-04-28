@@ -13,6 +13,7 @@ from printer import *
 from truck import *
 from robot import *
 import numpy as np
+import time
 from tabulate import tabulate
 from threading import Timer
 
@@ -40,87 +41,94 @@ print('\n')
 
 # Initializing a first delivery
 delivery = warehouse.constructRandomDelivery(catalog)
-print(delivery)
+print(f'{delivery}\n')
 print(f'The amount of storage cells in the warehouse: {warehouse.getAmountOfStorageCells()}')
 print('\n')
+
 
 # Adds the delivery to the warehouse queue
 warehouse.add2WarehouseQueue(delivery)
 
-# Testing to set a cell to contain a robot
-'''warehouse.getLayout()[0][2].setContainRobot(True)
-warehouse.printWarehouseStatus()'''
-
 # Creating a robot
-robot1 = Robot('XX-1')
-warehouse.addRobot(robot1)
+robots = warehouse.createRobots(4)
+warehouse.addRobots(robots)
 warehouse.loadRobotFromQueue()
 
-robot2 = Robot('XX-2')
-warehouse.addRobot(robot2)
-warehouse.loadRobotFromQueue()
 
-print(f'The robot contains: {robot1.getProducts()}')
-print(f'The route for the robot to the shelf is: {warehouse.calculateRouteFromDelivery2Storage(robot1.getProducts())}')
-print(f'The route for the robot back home is: {warehouse.calculateRouteHome(robot1.getProducts())}')
+print(f'The robot contains: {robots[0].getProducts()}')
+print(f'The route for the robot to the shelf is: {warehouse.calculateRouteFromDelivery2Storage(robots[0].getProducts())}')
+#print(f'The route for the robot back home is: {warehouse.calculateRouteHome()}')
 
 def simulateLoadWarehouse():
     
-    while warehouse.warehouseQueue!=
+    timer = 0
+
+    while warehouse.warehouseQueue:
         layout = warehouse.getLayout()
 
         for robot in warehouse.getRobots():
+
+            #print('Robot availability: ', robot.isRobotAvailable())
+            #print('Robot route: ', robot.getRoute())
             if robot.isRobotAvailable():
+                Print = False
                 warehouse.loadRobotFromQueue()
                 robot.setRobotAvailability(False)
                 goal = warehouse.findGoalCellLoading(robot.getProducts())
+                robot.setGoalPos(goal)
                 route2shelf = warehouse.calculateRouteFromDelivery2Storage(robot.getProducts())
+                robot.setRoute(route2shelf)
+                robot.setGoing2Shelf(True)
                 robot.setCurrPos(route2shelf[0])
-            '''
-            elif robot.isRobotAvailable() == False:
-                nextMove = robot.r
-            '''
 
-        for move in route2shelf:
+            else:
+                Print = True
+                print('Robot route: ', robot.getRoute())
 
-            layout[move[1]-1][move[0]-1].setContainRobot(True)
-            robot.setCurrPos(move)
+                if not robot.getRoute():
+                    if robot.getGoing2Shelf():
+                        shelf1 = layout[robot.getGoalPos()[1]-1][robot.getGoalPos()[0]-1].getShelf1()
+                        shelf2 = layout[robot.getGoalPos()[1]-1][robot.getGoalPos()[0]-1].getShelf2()
+
+                        if robot.getProducts()[0] == shelf1.getProductSerialNr():
+                            robot.loadShelf(shelf1, robot.getProducts()[0], robot.getProducts()[1])
+                            print(f'Shelf 1 now contains: {shelf1.getProductSerialNr()} - amount: {shelf1.getAmount()}')
+                        elif robot.getProducts()[0] == shelf2.getProductSerialNr():
+                            robot.loadShelf(shelf2, robot.getProducts()[0], robot.getProducts()[1])
+                            print(f'Shelf 2 now contains: {shelf2.getProductSerialNr()} - amount: {shelf2.getAmount()}')
+
+                        robot.setGoing2Shelf(False)
+                        robot.setGoingHome(True)
+                        route2home=warehouse.calculateRouteHome(robot.getGoalPos())
+                        robot.setRoute(route2home)
+
+                    elif robot.getGoingHome():
+                        # Do not want to print when we are already back at start
+                        if robot.getGoingHome() and len(robot.getRoute())==0:
+                            robot.setRobotAvailability(True)
+                            break                        
+                
+                else:
+                    move = robot.getRoute()[0]
+                    if layout[move[1]-1][move[0]-1].getContainRobot():
+                        continue
+                    else:
+                        move = robot.getRoute().pop(0)
+
+                    if robot.getRoute():
+                        layout[move[1]-1][move[0]-1].setContainRobot(True)
+                        robot.setCurrPos(move)
+                
+        if Print:
             warehouse.printWarehouseStatus()
-            layout[move[1]-1][move[0]-1].setContainRobot(False)
+            for row in layout:
+                for cell in row:
+                    cell.setContainRobot(False)
 
-            if move == route2shelf[-1]:
-                
-                route2home=warehouse.calculateRouteHome(robot.getProducts())
-                
-                shelf1 = layout[goal[1]-1][goal[0]-1].getShelf1()
-                shelf2 = layout[goal[1]-1][goal[0]-1].getShelf2()
+        timer += 1
+        time.sleep(0.1)
+    return timer
 
-                print('goalcell: ', goal)
 
-                print('robot.getProducts(): ', robot.getProducts())
-                print('shelf1.getProductSerialNr(): ', shelf1.getProductSerialNr())
-                print('shelf2.getProductSerialNr(): ', shelf2.getProductSerialNr())
-                if robot.getProducts()[0] == shelf1.getProductSerialNr():
-                    robot.loadShelf(shelf1, robot.getProducts()[0], robot.getProducts()[1])
-                    print(f'Shelf 1 now contains: {shelf1.getProductSerialNr()} - amount: {shelf1.getAmount()}')
-                elif robot.getProducts()[0] == shelf2.getProductSerialNr():
-                    robot.loadShelf(shelf2, robot.getProducts()[0], robot.getProducts()[1])
-                    print(f'Shelf 2 now contains: {shelf2.getProductSerialNr()} - amount: {shelf2.getAmount()}')
-                
-            
-        for move in route2home:
-            # Do not want to print when we are already back at start
-            if move == route2home[-1]:
-                robot.setRobotAvailability(True)
-                break
-                
-            layout[move[1]-1][move[0]-1].setContainRobot(True)
-            robot.setCurrPos(move)
-            warehouse.printWarehouseStatus()
-            layout[move[1]-1][move[0]-1].setContainRobot(False)
-
-            
-
-simulateLoadWarehouse()
-
-    #Timer(1, simulateLoadWarehouse).start()
+def simulateRetrieveOrders():
+    ''

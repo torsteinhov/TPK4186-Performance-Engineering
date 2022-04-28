@@ -9,7 +9,7 @@ class Delivery:
     def __init__(self, products):
 
         self.date = datetime.today()
-        self.products = products
+        self.products = products # {product: amount}
     
     def __str__(self):
 

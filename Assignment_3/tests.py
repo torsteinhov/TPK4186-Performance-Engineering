@@ -63,11 +63,9 @@ class Test(unittest.TestCase):
         robot1.setRoute([[4,8],[5,8],[6,8]])
         robot1.getRoute([[4,8],[5,8],[6,8]])
         self.assertEqual(robot1.getCurrPos(), [4,8])
-        self.assertEqual(robot1.getNextPos,[5,8]])
-        self.assertEqual(robot1.getGoalPos, [6,8])
         robot1.moveRobot()
         self.assertEqual(robot1.getCurrPos(), [5,8])
-        self.assertEqual(robot1.getNextPos,[6,8]])
+        self.assertEqual(robot1.getNextPos(),[6,8])
         robot1.moveRobot()
         self.assertEqual(robot1.getCurrPos(), [6,8])
 
@@ -100,103 +98,8 @@ class Test(unittest.TestCase):
         #Warehouse
         catalog = warehouse.constructCatalog(warehouse.getAmountOfStorageCells()*2)
 
-
-
-
-
-
-
-
-        
-
-        
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-        
-        
-
-        
-
-
-
-
         #Client Order
         order = ClientOrder()
-
-
-
-
-    #Setting up the warehouse(16x24)
-    warehouse = Warehouse(height=16,width=24)
-    warehouse.constructWarehouseLayout()
-
-    #Print the warehouse
-    printer = Printer(warehouse)
-    printer.printWarehouseLayout()
-
-    # Constructing a catalog
-    # Since each shelf can only contain one product type, the catalog is restricted
-    # by the size of the warehouse (amount of shelves = storage cells * 2)
-    catalog = warehouse.constructCatalog(warehouse.getAmountOfStorageCells()*2)
-    print('Printing the catalog'+ '\n'+str(warehouse.getCatalog()))
-
-    # Assign each shelf with its product type
-    warehouse.assignShelves2ProductTypes()
-    
-    # Testing a random storage shelf for its product serial number
-    
-    print(f'Checking the serialnr of a storage shelf: {warehouse.getLayout()[1][6].shelf1.getProductSerialNr()}')
-    print('\n')
-
-    # Initializing a first delivery
-    delivery = warehouse.constructRandomDelivery(catalog)
-    print(delivery)
-    print(f'The amount of storage cells in the warehouse: {warehouse.getAmountOfStorageCells()}')
-    print('\n')
-
-    # Adds the delivery to the warehouse queue
-    warehouse.add2WarehouseQueue(delivery)
-
-    # Testing to set a cell to contain a robot
-    warehouse.getLayout()[0][2].setContainRobot(True)
-    warehouse.printWarehouseStatus()
-
-    # Creating a robot
-    robot1 = Robot('XX-1')
-    warehouse.addRobot(robot1)
-    warehouse.loadRobotFromQueue()
-
-    print(f'The robot contains: {robot1.getProducts()}')
-    print(f'This cell has coordinates: {warehouse.getLayout()[0][0].getX()}')
-
-    print(warehouse.calculateRouteFromDelivery2Storage(robot1.getProducts()))
-
-
-
-
-
-
 
 
 if __name__ == "__main__":

@@ -1,9 +1,42 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from multiprocessing.sharedctypes import Value
 from sympy import ProductSet
 
 
 class Truck:
 
+    """
+    A class used to represent a truck.
+    ...
+
+    Attributes
+    ----------
+    deliveries : delivery object
+        a string with the serial number of the product
+    weight: int 
+        integer describing the weight loaded on the truck(in kilogram)
+    max_weight: int
+        integer describing the maximum weight the truck can take(in kilogram)
+    
+
+    Methods
+    -------
+    __str__()
+        prints out intresting information in a nice way
+    getWeight()
+        gets the weight loaded on the truck
+    addProduct(product, amount)
+        add amount of a product to the truck
+    removeProduct(product, amount)
+        remove amount of a product off the truck
+    notFull(product)
+        check(true/false) if the truck are going to be full if you add a product
+    """
     
     def __init__(self, deliveries):
         self.deliveries = deliveries

@@ -1,3 +1,9 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime

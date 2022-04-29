@@ -1,3 +1,9 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime
@@ -7,7 +13,7 @@ import numpy as np
 class Catalog:
 
     """
-    A class used to represent the catalog 
+    A class used to represent a catalog 
     ...
 
     Attributes
@@ -17,6 +23,8 @@ class Catalog:
     
     Methods
     -------
+    __str__()
+        prints out intresting information in a nice way
     getProducts()
         gets product objects from the catalog
     setProducts(products)

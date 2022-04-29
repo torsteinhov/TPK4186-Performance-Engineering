@@ -1,3 +1,10 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
+
 from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime
@@ -7,7 +14,7 @@ import numpy as np
 class Product:
 
     """
-    A class used to represent the products
+    A class used to represent a single product.
     ...
 
     Attributes
@@ -25,7 +32,7 @@ class Product:
         sets the serial number 
     getWeight()
         gets the weight of the product
-    setWeight()
+    setWeight(weight)
         sets the weight of the product
     """
 

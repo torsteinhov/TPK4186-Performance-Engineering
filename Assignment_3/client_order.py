@@ -1,3 +1,9 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime
@@ -7,7 +13,7 @@ import numpy as np
 class ClientOrder:
 
     """
-    A class used to represent the client orders 
+    A class used to represent the client order
     ...
 
     Attributes
@@ -19,6 +25,8 @@ class ClientOrder:
     
     Methods
     -------
+    __str__()
+        prints out intresting information in a nice way
     getOrder()
         gets the order
     setOrder(order)

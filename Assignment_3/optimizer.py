@@ -8,7 +8,6 @@ Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
 
-
 from catalog import *
 from warehouse import *
 from cell import *
@@ -26,9 +25,37 @@ from threading import Timer
 import numpy as np
 import matplotlib.pyplot as plt
 
-'''Here you can change the number of robots you would like to test the optimization with:'''
+
+"""
+    A class used to print different operations/status in the warehouse
+    ...
+
+    Attributes
+    ----------
+    warehouse : warehouse object
+        a warehouse object
+    layout: 2D list
+        2D list of the warehouse
+    
+    Methods
+    -------
+    printWarehouseLayoutRAW()
+        for troubleshooting when creating the warehouse layout. Prints out coordinates and cell type in a readable format
+    printWarehouseLayout()
+        prints the warehouse layout
+    printCatalog(catalog)
+        prints the catalog
+    printRobot(robot)
+        prints the robot
+    """
+
+
+
+
+'''Here you can change the number of robots and warehouses for the otimization:'''
 
 NUMBER_OF_ROBOTS = 3
+NUMBER_OF_WAREHOUSES = 10
 
 class Optimizer:
 
@@ -42,7 +69,8 @@ class Optimizer:
         x = 12
         y = 20
 
-        for i in range(10):
+        #The number of warehouses
+        for i in range(NUMBER_OF_WAREHOUSES):
 
             y += 2*i
             if i%4 == 0:

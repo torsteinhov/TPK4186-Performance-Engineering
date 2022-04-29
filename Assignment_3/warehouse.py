@@ -21,6 +21,106 @@ from tabulate import tabulate
 
 class Warehouse:
 
+    """
+    A class that represents the warehouse which contains all the other data models within the warehouse.
+    This class also has all the methods that creates data for all the simulation and optimization.
+    ...
+
+    Attributes
+    ----------
+    catalog : list
+        A list with all the different products that exist in the warehouse
+    robots: list
+        A list of all the robots within the warehouse
+    layout : 2D list
+        A datastructure that holds the layout of the warehouse with all corresponding cells
+    height: int 
+        The height of the warehouse (y-value)
+    width : int
+        The width of the warehouse (x-value)
+    warehouseQueue: list
+        A list of all deliveries that is coming into the warehouse
+    clientOrderQueue : list
+        A list of all client orders waiting for robots in the warehouse
+    
+    
+    Methods
+    -------
+    getCatalog()
+        gets the catalog of the warehouse
+    setCatalog(catalog)
+        sets the catalog for the warehouse
+    getRobots()
+        gets the robots in the warehouse
+    setRobots()
+        sets the robots in the warehouse
+    addRobots(n_robots)
+        Adds robots to the warehouse
+    getLayout()
+        Gets the layout of the warehouse
+    setLayout()
+        Sets the layout of the warehouse
+    getHeight()
+        Gets the height of the warehouse
+    getWidth()
+        Gets the width of the warehouse
+    getWarehouseQueue()
+        Gets the warehouse queue
+    setWarehouseQueue()
+        Sets the warehouse queue
+    getClientOrderQueue()
+        Gets the client order queue
+    setClientOrderQueue()
+        Sets the client order queue
+    add2WarehouseQueue()
+        Adds a delivery to the warehouse queue
+    add2ClientOrderQueue()
+        Adds a client order to the client order queue
+    add_product()
+        Adds a product to the catalog
+    remove_product()
+        Removes a product from the catalog
+    constructCatalog()
+        Constructs a catalog of different products with their own serial numbers based on the size of the warehouse.
+    constructRandomDelivery()
+        Constructs a random delivery based of the catalog of the warehouse, therefore deliveries can only contain
+        products that fits in the warehouse.
+    constructRandomClientOrder()
+        Constructs a random client order based of the catalog of the warehouse. It is also checked whether the products
+        exist in the warehouse. We did not create a ValueError here since we thought that assuming that the warehouse has
+        what the client has ordered is a reasonable assumption.
+    constructWarehouseLayout()
+        Constructs the layout of the warehouse based of the height and width of the warehouse. We have based the construction
+        off of basic logic with operators such as +,- and % to get the layout correct. It is also added the correct type
+        of Cell based on where the Cell lies.
+    getAmountOfStorageCells()
+        Iterates through the layout of the warehouse (all cells) and returns the amount of storage cells, if you multiply this number
+        by 2, which is done throughout the project, you get the amount of storage SHELVES.
+    assignShelves2ProductTypes()
+        Iterates through the layout of the warehouse (all cells) and assign each shelf a specific product type with a
+        corresponding serial number. This assignment is based off the catalog which again is based of the size of the warehouse, 
+        therefore all shelves will be assigned a product type.
+    printWarehouseStatus()
+        Prints out a more visual friendly status of the warehouse.
+    getAvailableRobot()
+        Checks the robots list for available robots.
+    loadRobotFromQueue()
+        Unloads the robot with products from the warehouse when the robot is in the corresponding storage cell and correct shelf.
+        To deliver from trucks to the shelves.
+    loadRobotFromOrder()
+        Loads the robot with products from the warehouse when the robot is in the corresponding storage cell and correct shelf.
+        To retrieve for the customer.
+    findGoalCellLoading(products)
+        Takes in a product and finds the correct storage cell within the warehouse, and the correct shelf within the storage cell.
+    calculateRouteFromDelivery2Storage()
+        Calculates the route for the robot from the delivery depot (trucks) to the correct storage cell and sets the route for the robot.
+    calculateRouteHome()
+        Calculates the route for the robot from the storage cell to the delivery depot and sets the route for the robot.
+    createRobots(n_robots)
+        Creates n amount of robots and sets them to be assigned to the warehouse.
+
+    """
+
     def __init__(self, height, width, catalog=None, robots=[], layout=None, warehouseQueue=[], clientOrderQueue=[]):
         self.catalog = catalog
         self.robots = robots
@@ -94,6 +194,9 @@ class Warehouse:
         if product in self.catalog:
             self.catalog.getProducts().remove(product)
     
+    
+    ''' TASK 2: From here and downwards we have many functions that creates deliveries, client orders, warehouse layout etc..'''
+
     def constructCatalog(self, n):
 
         products = []

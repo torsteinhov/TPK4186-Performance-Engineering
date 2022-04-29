@@ -1,3 +1,9 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime
@@ -46,6 +52,8 @@ class Robot:
 
     Methods
     -------
+    __str__()
+        prints out intresting information in a nice way
     getId()
         gets the id
     getGoingHome()
@@ -89,15 +97,10 @@ class Robot:
     loadRobot(serialNr, amount)
         load the robot with a product(serialNr) and amount of the product
     loadShelf(shelf,serialNr, amount)
-        l
-    
-    
-    
-    
-    
+        load a particular shelf with a product(serialNr) and amount of the product
+    unloadShelf(shelf,serialNr, amount)
+        unload a particular shelf with it's product(serialNr) and amount of the product
 
-    
-    
     """
 
     def __init__(self, id, products=None):

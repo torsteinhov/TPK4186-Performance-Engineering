@@ -1,3 +1,9 @@
+'''
+Torstein Heltne Hovde
+Lars Magnus Johnsen
+Simen Eger Heggelund
+'''
+
 from winreg import DisableReflectionKey
 from numpy import product
 from datetime import datetime
@@ -19,6 +25,8 @@ class Delivery:
     
     Methods
     -------
+    __str__()
+        prints out intresting information in a nice way
     getWeight()
         gets the total weight of the delivery
     getDate()

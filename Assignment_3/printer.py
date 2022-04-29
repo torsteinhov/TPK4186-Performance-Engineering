@@ -15,6 +15,29 @@ from tabulate import tabulate
 
 class Printer:
 
+    """
+    A class used to print different operations/status in the warehouse
+    ...
+
+    Attributes
+    ----------
+    warehouse : warehouse object
+        a warehouse object
+    layout: 2D list
+        2D list of the warehouse
+    
+    Methods
+    -------
+    printWarehouseLayoutRAW()
+        for troubleshooting when creating the warehouse layout. Prints out coordinates and cell type in a readable format
+    printWarehouseLayout()
+        prints the warehouse layout
+    printCatalog(catalog)
+        prints the catalog
+    printRobot(robot)
+        prints the robot
+    """
+
     def __init__(self, warehouse):
         self.warehouse = warehouse
         self.layout = warehouse.constructWarehouseLayout()
@@ -47,17 +70,3 @@ class Printer:
     
     def printRobot(self, robot):
         print(robot)
-    
-'''
-
-warehouse = Warehouse(width=12, height=8)
-catalog = warehouse.constructCatalog(120)
-products = catalog.getProducts()
-#print(products)
-#robot = Robot(1, (2,3), (5,5), products)
-warehouse.setCatalog(catalog)
-#warehouse.setRobots(robot)
-printer = Printer(warehouse)
-printer.printWarehouseLayout()
-#printer.printCatalog(warehouse.getCatalog())
-#printer.printRobot(warehouse.getRobots())'''

@@ -17,6 +17,15 @@ import time
 from tabulate import tabulate
 from threading import Timer
 
+"""
+    Methods
+    -------
+    simulateLoadWarehouse(visualization, printRoute, warehouse)
+        simulates the robot(s) loading the warehouse
+    simulateRetrieveOrders(visualization, printRoute)
+        simulates the robot(s) retrieving orders
+"""   
+
 
 # handles the operation of the warehouse
 

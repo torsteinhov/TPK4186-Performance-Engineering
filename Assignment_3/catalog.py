@@ -5,6 +5,23 @@ from math import floor
 import numpy as np
 
 class Catalog:
+
+    """
+    A class used to represent the catalog 
+    ...
+
+    Attributes
+    ----------
+    products : product objects
+        product objects in the catalog
+    
+    Methods
+    -------
+    getProducts()
+        gets the products in the catalog
+    setProducts(products)
+        sets the products to the catalog
+    """
     
     def __init__(self, products):
 

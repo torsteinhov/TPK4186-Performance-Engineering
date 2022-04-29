@@ -113,6 +113,8 @@ class Warehouse:
         self.setCatalog(catalog)
         return catalog
 
+    ''' TASK 2: From here and downwards we have many functions that creates deliveries, client orders, warehouse layout etc..'''
+
     def constructRandomDelivery(self, catalog):
 
         truck_max = 20000
@@ -355,6 +357,7 @@ class Warehouse:
         else:
             self.warehouseQueue.pop(0)
             robot.loadRobot(loading_delivery[0].getSerialnr(), loading_delivery[1])
+        
     
     # We retrieve a product from the client order queue and adds it to the robot,
     # The client order queue is then updated
@@ -368,7 +371,7 @@ class Warehouse:
             loading_order[1] -= cap_robot_products
             robot.loadRobot(loading_order[0].getSerialnr(), cap_robot_products)
         else:
-            self.warehouseQueue.pop(0)
+            self.clientOrderQueue.pop(0)
             robot.loadRobot(loading_order[0].getSerialnr(), loading_order[1])
     
     # Finds the shelf for the specific product in the warehouse

@@ -20,13 +20,15 @@ from threading import Timer
 
 # handles the operation of the warehouse
 
-# sets the height and width of the warehouse
-warehouse = Warehouse(height=16,width=24)
+''' THE WAREHOUSE:'''
+# sets the height and width of the warehouse, this can be changed (check assumptions in warehouse.constructWarehouseLayout())
+warehouse = Warehouse(height=10,width=12)
 # constructs the layout
 warehouse.constructWarehouseLayout()
 printer = Printer(warehouse)
 printer.printWarehouseLayout()
 
+''' THE CATALOG:'''
 # Constructing a catalog
 # Since each shelf can only contain one product type, the catalog is restricted
 # by the size of the warehouse (amount of shelves = storage cells * 2)
@@ -39,27 +41,35 @@ warehouse.assignShelves2ProductTypes()
 print(f'Checking the serialnr of a storage shelf: {warehouse.getLayout()[1][6].shelf1.getProductSerialNr()}')
 print('\n')
 
+''' DELIVERY:'''
 # Initializing a first delivery
 delivery = warehouse.constructRandomDelivery(catalog)
 print(f'{delivery}\n')
 print(f'The amount of storage cells in the warehouse: {warehouse.getAmountOfStorageCells()}')
 print('\n')
 
-
 # Adds the delivery to the warehouse queue
 warehouse.add2WarehouseQueue(delivery)
 
-# Creating a robot
+''' ROBOTS: '''
+# Creating robots, the amount of robots can be set here!
 robots = warehouse.createRobots(3)
 warehouse.addRobots(robots)
-warehouse.loadRobotFromQueue()
 
+print('ROBOTS: \n')
+for robot in robots:
+    warehouse.loadRobotFromQueue()
+    print(f'Robot: {robot.getId()} contains: {robot.getProducts()}')
+    print(f'Robot: {robot.getId()} route to storage shelf: {warehouse.calculateRouteFromDelivery2Storage(robot.getProducts())[:-12]}')
+    print(f'Robot: {robot.getId()} route back home: {warehouse.calculateRouteHome(warehouse.calculateRouteFromDelivery2Storage(robot.getProducts())[-1])}')
+    robot.setRobotAvailability(False)
+    print('\n')
 
-print(f'The robot contains: {robots[0].getProducts()}')
-print(f'The route for the robot to the shelf is: {warehouse.calculateRouteFromDelivery2Storage(robots[0].getProducts())}')
-#print(f'The route for the robot back home is: {warehouse.calculateRouteHome()}')
+#Need to make the robots available again for simulation
+for robot in robots:
+    robot.setRobotAvailability(True)
 
-def simulateLoadWarehouse(visualization=True):
+def simulateLoadWarehouse(visualization=True, printRoute=True):
     
     timer = 0
 
@@ -68,8 +78,6 @@ def simulateLoadWarehouse(visualization=True):
 
         for robot in warehouse.getRobots():
 
-            #print('Robot availability: ', robot.isRobotAvailable())
-            #print('Robot route: ', robot.getRoute())
             if robot.isRobotAvailable():
                 Print = False
                 warehouse.loadRobotFromQueue()
@@ -83,7 +91,8 @@ def simulateLoadWarehouse(visualization=True):
 
             else:
                 Print = True
-                print('Robot route: ', robot.getRoute())
+                if printRoute:
+                    print('Robot route: ', robot.getRoute())
 
                 if not robot.getRoute():
                     if robot.getGoing2Shelf():

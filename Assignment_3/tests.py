@@ -83,8 +83,6 @@ class Test(unittest.TestCase):
         self.assertEqual(robot1.isAvailable(), True)
 
 
-
-
         self.assertEqual(robot1.getMaxCarry(), 40) #Må jeg ha self.maxCarry = 40 i init? 
 
         #Truck

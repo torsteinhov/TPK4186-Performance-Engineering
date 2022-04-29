@@ -29,14 +29,15 @@ from tabulate import tabulate
 from threading import Timer
 
 '''Simulate the loading of the warehouse'''
-print(simulateLoadWarehouse())
+print(simulateLoadWarehouse(visualization=True))
 
 # Initialize the first client order
 clientOrder = warehouse.constructRandomClientOrder(catalog)
 print(f'{clientOrder}\n')
 
+time.sleep(3)
 # Adds the client order to the client order queue
 warehouse.add2ClientOrderQueue(clientOrder)
 
 '''Simulate the robots retrieving client orders'''
-print(simulateRetrieveOrders())
+print(simulateRetrieveOrders(visualization=True))

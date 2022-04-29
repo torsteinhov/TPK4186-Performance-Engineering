@@ -22,7 +22,7 @@ from threading import Timer
 
 ''' THE WAREHOUSE:'''
 # sets the height and width of the warehouse, this can be changed (check assumptions in warehouse.constructWarehouseLayout())
-warehouse = Warehouse(height=10,width=12)
+warehouse = Warehouse(height=16,width=24)
 # constructs the layout
 warehouse.constructWarehouseLayout()
 printer = Printer(warehouse)
@@ -69,9 +69,10 @@ for robot in robots:
 for robot in robots:
     robot.setRobotAvailability(True)
 
-def simulateLoadWarehouse(visualization=True, printRoute=True):
+def simulateLoadWarehouse(visualization=True, printRoute=True, warehouse=warehouse):
     
     timer = 0
+    
 
     while warehouse.getWarehouseQueue():
         layout = warehouse.getLayout()
@@ -93,7 +94,7 @@ def simulateLoadWarehouse(visualization=True, printRoute=True):
                 Print = True
                 if printRoute:
                     print('Robot route: ', robot.getRoute())
-
+                
                 if not robot.getRoute():
                     if robot.getGoing2Shelf():
                         shelf1 = layout[robot.getGoalPos()[1]-1][robot.getGoalPos()[0]-1].getShelf1()
@@ -136,13 +137,14 @@ def simulateLoadWarehouse(visualization=True, printRoute=True):
                 for cell in row:
                     cell.setContainRobot(False)
 
-        timer += 1
+        # Takes 10 seconds to move the robots one cell
+        timer += 10
         if visualization:
             time.sleep(0.1)
     return timer
 
 
-def simulateRetrieveOrders(visualization=True):
+def simulateRetrieveOrders(visualization=True, printRoute=True):
     
     timer = 0
 
@@ -166,7 +168,8 @@ def simulateRetrieveOrders(visualization=True):
 
             else:
                 Print = True
-                print('Robot route: ', robot.getRoute())
+                if printRoute:
+                    print('Robot route: ', robot.getRoute())
 
                 if not robot.getRoute():
                     if robot.getGoing2Shelf():

@@ -5,6 +5,29 @@ from math import floor
 import numpy as np
 
 class ClientOrder:
+
+    """
+    A class used to represent the client orders 
+    ...
+
+    Attributes
+    ----------
+    date : datetime object
+        datetime object corresponding to the client order
+    order: dictionary 
+        dictionary containing product and amount(client order). Product is key and amount is value
+    
+    Methods
+    -------
+    getOrder()
+        gets the order
+    setOrder(order)
+        sets the order 
+    getWeight()
+        gets the total weight of the order
+    getDate()
+        gets the date and time when the order is placed/created
+    """
     
     def __init__(self, order):
 
@@ -28,12 +51,6 @@ class ClientOrder:
     
     def setOrder(self, order):
         self.order = order
-    
-    def remove(self, product, amount):
-        pass
-    
-    def add(self, product, amount):
-        pass
 
     def getWeight(self):
         weight = 0

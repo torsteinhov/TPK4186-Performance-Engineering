@@ -22,8 +22,8 @@ class Cell:
         a shelf object from the shelf class
     shelf2 : shelf object
         a shelf object from the shelf class
-    route : list
-        a list that contains coordinates(list with a x and a y integer) to describe the robots' route
+    route : 2D list
+        a 2D list of the coordinates with its projected path
     product_type: product object
         a product object from the products class
     containRobot: boolean
@@ -44,9 +44,26 @@ class Cell:
         gets the shelf2 object
     getRoute()
         gets the coordinates that the route consists of
+    getProductType()
+        gets the product type in storage cells
     getContainRobot()
         gets true/false depending on whether the cell contains a robot
-
+    setX(x)
+        set the x coordinate
+    setY(y)
+        sets the y coordinate
+    setType(type)
+        sets the cell-type
+    setShelf1(shelf1)
+        sets the shelf1 object
+    setShelf2(shelf2)
+        sets the shelf2 object
+    setRoute(route)
+        sets the coordinates that the route consists of 
+    setProductType(product_type)
+        sets the product type in storage cells
+    setContainRobot()
+        sets true/false depending on whether the cell contains a robot
     
     """
 
@@ -96,8 +113,15 @@ class Cell:
     def setRoute(self, route):
         self.route = route
     
+    def getProductType(self):
+        return self.product_type
+    
+    def setProductType(self, product_type):
+        self.product_type = product_type
+    
     def getContainRobot(self):
         return self.containRobot
     
     def setContainRobot(self, containRobot):
         self.containRobot = containRobot
+

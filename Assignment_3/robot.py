@@ -10,6 +10,96 @@ from shelf import *
 class Robot:
     # Max 40kg, can carry products of only one type at a time.
 
+    """
+    A class used to represent the robots
+    ...
+
+    Attributes
+    ----------
+    route : 2D list
+        a 2D list of the coordinates with its projected path
+    curr_pos: list
+        a list with the x and y coordinate of the robots' current position
+    next_pos: list 
+        a list with the x and y coordinate of the robots' next position
+    last_pos: list 
+        a list with the x and y coordinate of the robots' last position
+    goal_pos: list 
+        a list with the x and y coordinate of the robots' goal position
+    goingHome: boolean
+        true if the robot is going back to the delivery loading ramp. Otherwise false
+    going2Shelf: boolean
+        true if the robot is going to a shelf to load a product. Otherwise false
+    loadtime: int
+        time(in seconds) that the robot use to load a product from a shelf
+    movetime: int
+        time(in seconds) that the robot use to move from a cell to another cell
+    id: str
+        string with the robots' id
+    products: list
+        list with serial number of the product as well as the amount
+    maxCarry: int
+        determines the maximum weight the robot can carry (in kg)
+    isAvailable: boolean
+        true if the robot available to collect products. Otherwise, false
+    
+
+    Methods
+    -------
+    getId()
+        gets the id
+    getGoingHome()
+        gets true if the robot is going back to the delivery loading ramp. Otherwise false
+    getGoing2Shelf()
+        gets true if the robot is going to a shelf to load a product. Otherwise false
+    getRoute()
+        gets the coordinates that the route consists of
+    getProducts()
+        gets the product object the robot carry
+    getMaxCarry()
+        gets the maximum weight the robot can carry
+    getLastPos()
+        gets list with the x and y coordinate of the robots' last position
+    getCurrPos()
+        gets list with the x and y coordinate of the robots' current position
+    getNextPos()
+        gets list with the x and y coordinate of the robots' next position
+    getGoalPos()
+        gets list with the x and y coordinate of the robots' goal position
+    isRobotAvailable()
+        gets the robot's status, ie whether it is busy or not
+    setGoingHome(goingHome)
+        sets the status of goingHome to true/false
+    setGoing2Shelf(going2Shelf)
+        sets the status of going2Shelf to true/false
+    setRoute(route)
+        sets the robots' route
+    setLastPos(last_pos)
+        sets the robots' last position
+    setCurrPos(curr_pos)
+        sets the robots' current position
+    setGoalPos(goal_pos)
+        sets the robots' goal position
+    setNextPos(next_pos)
+        sets the robots' next position    
+    setProducts(products)
+        sets the products the robot carries
+    setRobotAvailability(availability)
+        sets the robots' status
+    loadRobot(serialNr, amount)
+        load the robot with a product(serialNr) and amount of the product
+    loadShelf(shelf,serialNr, amount)
+        l
+    
+    
+    
+    
+    
+
+    
+    
+    """
+
     def __init__(self, id, products=None):
         self.route = None # A 2D list of the coordinates with its projected path
         self.curr_pos = None
@@ -34,8 +124,7 @@ class Robot:
             if product.getType() != type:
                 raise ValueError('The products are not the same type!')'''
 
-        self.products = products
-    
+
     def __str__(self):
 
         string = 'Robot: ' + str(self.id) + ' current position: ' + str(self.getCurrPos()) + ' goal position: ' + str(self.getGoalPos()) + ' \n'

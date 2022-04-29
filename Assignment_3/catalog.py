@@ -18,9 +18,9 @@ class Catalog:
     Methods
     -------
     getProducts()
-        gets the products in the catalog
+        gets product objects from the catalog
     setProducts(products)
-        sets the products to the catalog
+        sets product objects to the catalog
     """
     
     def __init__(self, products):

@@ -39,6 +39,9 @@ class Warehouse:
     def getRobots(self):
         return self.robots
     
+    def setRobots(self, robots):
+        self.robots = robots
+    
     def addRobots(self, robots):
         for robot in robots:
             self.robots.append(robot)

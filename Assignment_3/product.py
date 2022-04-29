@@ -6,6 +6,29 @@ import numpy as np
 
 class Product:
 
+    """
+    A class used to represent the products
+    ...
+
+    Attributes
+    ----------
+    serialnr : str
+        a string with the serial number of the product
+    weight: int 
+        integer describing the weight of the product(in kilogram)
+    
+    Methods
+    -------
+    getSerialnr()
+        gets the serial number
+    setSerialnr(serialnr)
+        sets the serial number 
+    getWeight()
+        gets the weight of the product
+    setWeight()
+        sets the weight of the product
+    """
+
     def __init__(self, serialnr, weight):
 
         self.serialnr = serialnr

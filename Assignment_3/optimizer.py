@@ -1,8 +1,13 @@
 '''
+RUNNING THIS PROGRAM MAY TAKE 1 MINUTE BECAUSE OF ALL THE CALCULATIONS, PLEASE BE PATIENT :)
+'''
+
+'''
 Torstein Heltne Hovde
 Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
+
 
 from catalog import *
 from warehouse import *
@@ -18,7 +23,12 @@ import numpy as np
 import time
 from tabulate import tabulate
 from threading import Timer
+import numpy as np
+import matplotlib.pyplot as plt
 
+'''Here you can change the number of robots you would like to test the optimization with:'''
+
+NUMBER_OF_ROBOTS = 3
 
 class Optimizer:
 
@@ -29,16 +39,16 @@ class Optimizer:
 
         warehouses = []
         # Minimum sizes for our optimization, we saw it as unreasonable to have a smaller warehouse.
-        x = 10
-        y = 12
+        x = 12
+        y = 20
 
         for i in range(10):
 
-            x += 2*i
+            y += 2*i
             if i%4 == 0:
-                y += 6
+                x += 6
             
-            warehouse = Warehouse(x,y)
+            warehouse = Warehouse(y,x)
             warehouse.constructWarehouseLayout()
             warehouse.constructCatalog(warehouse.getAmountOfStorageCells()*2)
             warehouse.assignShelves2ProductTypes()
@@ -46,29 +56,56 @@ class Optimizer:
         
         return warehouses
 
-    def optimizeWarehouseSizes(self):
+    def optimizeWarehouseSizes(self, n_robots):
 
         data = [] # [[# storage cells: elapsed loading time],...]
         warehouses = self.createDifferentWarehouseSizes()
 
         for warehouse in warehouses:
+            printer = Printer(warehouse)
 
+            '''Uncomment to print out the different warehouse layouts'''
+            #printer.printWarehouseLayout()
             storagecells = warehouse.getAmountOfStorageCells()
 
-            # Wish to calculate the average of 100 deliveries to get accurate measurements (power of randomness)
+            # Wish to calculate the average of 50 deliveries to get accurate measurements (power of randomness)
             loadtimeList = []
-            for i in range(100):
+            for i in range(50):
                 delivery = warehouse.constructRandomDelivery(warehouse.getCatalog())
                 warehouse.add2WarehouseQueue(delivery)
-                time2Load = simulateLoadWarehouse(visualization=False, printRoute=False)
+                robots = warehouse.createRobots(n_robots)
+                warehouse.addRobots(robots)
+                time2Load = simulateLoadWarehouse(visualization=False, printRoute=False, warehouse=warehouse)
                 loadtimeList.append(time2Load)
                 warehouse.setWarehouseQueue([])
+                warehouse.setRobots([])
             
             avgLoadTime = sum(loadtimeList)/len(loadtimeList)
 
             data.append([storagecells, avgLoadTime])
 
         return data
+    
+    def visualizeWarehousesizeVSLoadingtime(self, n_robots):
+
+        data = optimizer.optimizeWarehouseSizes(n_robots)
+
+        for point in data:
+            print(f'Storage cells: {point[0]}   -   Elapsed time: {point[1]}\n')
+        
+        storageCells=[]
+        time=[]
+        for datapoint in data:
+            storageCells.append(datapoint[0])
+            time.append(datapoint[1])
+        fig = plt.figure(figsize = (10, 5))
+        plt.plot(storageCells, time, color ='maroon')
+        plt.xlabel("Number of storage cells in the warehouse")
+        plt.ylabel("Number of seconds to fill the warehouse ")
+        plt.title("Warehouse size vs time to fill the warehouse, number of robots = {}.".format(n_robots))
+        plt.show()
+
+
 
 optimizer = Optimizer()
-print(optimizer.optimizeWarehouseSizes())
+optimizer.visualizeWarehousesizeVSLoadingtime(NUMBER_OF_ROBOTS)

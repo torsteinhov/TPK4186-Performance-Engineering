@@ -6,6 +6,29 @@ import numpy as np
 
 class Delivery:
 
+    """
+    A class used to represent the delivery of products
+    ...
+
+    Attributes
+    ----------
+    date : datetime object
+        datetime object corresponding to the delivery
+    products: dictionary 
+        dictionary containing product and amount(client order). Product is key and amount is value
+    
+    Methods
+    -------
+    getWeight()
+        gets the total weight of the delivery
+    getDate()
+        gets the date and time when the delivery is completed/created
+    getProducts()
+        gets product objects from the delivery
+    setProducts(products)
+        sets product objects to the delivery
+    """
+
     def __init__(self, products):
 
         self.date = datetime.today()

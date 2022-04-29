@@ -15,6 +15,7 @@ class Robot:
         self.curr_pos = None
         self.next_pos = None
         self.goal_pos = None
+        self.last_pos = None
         self.goingHome = False
         self.going2Shelf = False
         self.loadtime = 120
@@ -65,6 +66,7 @@ class Robot:
     
     def setRoute(self, route):
         self.route = route
+        self.setLastPos(route[-1])
     
     def getProducts(self):
         return self.products
@@ -75,6 +77,12 @@ class Robot:
     def setProducts(self, products):
         self.products = products
     
+    def getLastPos(self):
+        return self.last_pos
+    
+    def setLastPos(self, last_pos):
+        self.last_pos = last_pos
+
     def getCurrPos(self):
         return self.curr_pos
     
@@ -110,6 +118,15 @@ class Robot:
             # Fills the shelf
             shelf.setAmount(shelf.getAmount() + amount)
             # The robot has loaded the shelf and we remove the products from the robot.
+            self.setProducts(None)
+    
+    def unloadShelf(self, shelf, serialNr, amount):
+
+        # This is checked twice, but nice etiquette.
+        if serialNr == shelf.getProductSerialNr():
+            # Retrieve products from the shelf
+            shelf.setAmount(shelf.getAmount() - amount)
+            # The robot has unloaded the shelf and we remove the products from the robot.
             self.setProducts(None)
 
 

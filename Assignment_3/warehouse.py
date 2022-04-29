@@ -124,7 +124,7 @@ class Warehouse:
         n_products = random.randint(10,20)
 
         # We also assume equal weight for each product
-        weight_per_product_type = 100
+        weight_per_product_type = 40
 
         delivery_weight = 0
         for i in range(n_products):
@@ -328,7 +328,7 @@ class Warehouse:
                 elif cell.getType() == 'loading':
                     row_grid.append(' -')
                 elif cell.getType() == 'storage':
-                    row_grid.append('S')
+                    row_grid.append('☐')
             
             grid.append(row_grid)
         
@@ -355,6 +355,21 @@ class Warehouse:
         else:
             self.warehouseQueue.pop(0)
             robot.loadRobot(loading_delivery[0].getSerialnr(), loading_delivery[1])
+    
+    # We retrieve a product from the client order queue and adds it to the robot,
+    # The client order queue is then updated
+    def loadRobotFromOrder(self):
+        robot = self.getAvailableRobot()
+        loading_order = self.clientOrderQueue[0]
+        product_weight = loading_order[0].getWeight()
+        cap_robot_products = floor(robot.getMaxCarry()/product_weight)
+
+        if loading_order[1] > cap_robot_products:
+            loading_order[1] -= cap_robot_products
+            robot.loadRobot(loading_order[0].getSerialnr(), cap_robot_products)
+        else:
+            self.warehouseQueue.pop(0)
+            robot.loadRobot(loading_order[0].getSerialnr(), loading_order[1])
     
     # Finds the shelf for the specific product in the warehouse
     def findGoalCellLoading(self, product):

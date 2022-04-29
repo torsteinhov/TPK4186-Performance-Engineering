@@ -39,4 +39,4 @@ print(f'{clientOrder}\n')
 warehouse.add2ClientOrderQueue(clientOrder)
 
 '''Simulate the robots retrieving client orders'''
-#simulateRetrieveOrders()
+print(simulateRetrieveOrders())

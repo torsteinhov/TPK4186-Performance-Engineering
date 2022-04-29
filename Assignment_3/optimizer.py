@@ -1,11 +1,11 @@
 '''
-RUNNING THIS PROGRAM MAY TAKE 1 MINUTE BECAUSE OF ALL THE CALCULATIONS, PLEASE BE PATIENT :)
-'''
-
-'''
 Torstein Heltne Hovde
 Lars Magnus Johnsen
 Simen Eger Heggelund
+'''
+
+'''
+RUNNING THIS PROGRAM MAY TAKE 1 MINUTE BECAUSE OF ALL THE CALCULATIONS, PLEASE BE PATIENT :)
 '''
 
 from catalog import *
@@ -27,26 +27,24 @@ import matplotlib.pyplot as plt
 
 
 """
-    A class used to print different operations/status in the warehouse
+    The class allows the user to explore with different variables to optimize the operation of the warehouse.
     ...
-
-    Attributes
-    ----------
-    warehouse : warehouse object
-        a warehouse object
-    layout: 2D list
-        2D list of the warehouse
     
     Methods
     -------
-    printWarehouseLayoutRAW()
-        for troubleshooting when creating the warehouse layout. Prints out coordinates and cell type in a readable format
-    printWarehouseLayout()
-        prints the warehouse layout
-    printCatalog(catalog)
-        prints the catalog
-    printRobot(robot)
-        prints the robot
+    createDifferentWarehouseSizes()
+        creates different warehouse layouts within the boundaries that are set for a warehouse.
+        Logic operations such as constructing the layout, constructing the catalog and assigning each shelf
+        to a product type is also performed.
+    optimizeWarehouseSizes(n_robots)
+        iterates through warehouses (NUMBER_OF_WAREHOUSES) and perform all necessary logic operations such as creating
+        a random delivery, adding it to the warehousequeue, creating robots and adding them to the warehouse.
+        Running the simulation of loading the warehouse with the robots (without visualization) and then adding the elapsed time
+        to a list, after this is done 50 times we calculate the average elapsed time and adds to a list that is returned with
+        the corresponding results from the other warehouses aswell (with other sizes).
+    visualizeWarehousesizeVSLoadingtime(n_robots)
+        Takes the result from optimizeWarehouseSizes() and plots it in a line diagram to show the correlation
+        between the size of the warehouse and elapsed time when loading the warehouse from deliveries.
     """
 
 

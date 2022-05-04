@@ -15,7 +15,7 @@ class Job:
                                  if these are to be performed on the same machine, one of them need to be moved their elapsed time amount.
     '''
 
-    def __init__(self, id, operations, start=None, stop=None):
+    def __init__(self, id, operations=[], start=None, stop=None):
         self.id = id
         self.operations = operations # [operation_object, operation_object,..]
         self.start = start
@@ -34,11 +34,11 @@ class Job:
         self.operations = operations
     
     def addOperation(self, operation):
-        if operation not in self.operations:
-            self.operations.append(operation)
+        #if operation not in self.operations:
+        self.operations.append(operation)
 
     def removeOperation(self, operation):
-        if operation in self.operations:
+        if operation in self.getOperations():
             self.operations.remove(operation)
     
     def getStart(self):

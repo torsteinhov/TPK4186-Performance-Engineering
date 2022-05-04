@@ -6,8 +6,8 @@ Simen Eger Heggelund
 
 class Operation:
 
-    def __init__(self, id, duration, start=None, stop=None):
-        self.id = id
+    def __init__(self, machine, duration, start=None, stop=None):
+        self.machine = machine
         self.duration = duration
         self.start = start
         self.stop = stop
@@ -18,11 +18,11 @@ class Operation:
     def setDuration(self, duration):
         self.duration = duration
     
-    def getId(self):
-        return self.id
+    def getMachine(self):
+        return self.machine
     
-    def setId(self, id):
-        self.id = id
+    def setMachine(self, machine):
+        self.machine = machine
     
     def getStart(self):
         return self.start

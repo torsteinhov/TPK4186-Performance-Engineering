@@ -54,11 +54,12 @@ class Problem:
     def formatData2(self):
         print(self.getData().values.tolist())
     
-    def formatData(self):
+    '''TASK 4'''
+    def loadAndFormatData(self):
         jobs = []
 
         # Gets the job number of the last element in the Job column
-        numerOfJobs=self.data['Job'].iloc[-1]
+        numerOfJobs=self.data['Job'].max()
         for i in range(1,numerOfJobs+1):
             jobs.append(Job(i,operations=[]))
             
@@ -82,7 +83,8 @@ class Problem:
         self.setJobs(jobs)
         self.setMachines(machines)
 
-    def printData(self):
+    '''TASK 5'''
+    def exportData2Excel(self):
 
         excel_list = [['Job', 'Machine', 'Duration']]
         for job in self.getJobs():
@@ -111,8 +113,8 @@ class Problem:
         plt.show()
 
 problem = Problem()
-problem.formatData()
-problem.printData()
+problem.loadAndFormatData()
+problem.exportData2Excel()
 
 
 for job in problem.getJobs():

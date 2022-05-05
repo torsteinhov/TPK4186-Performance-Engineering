@@ -4,9 +4,11 @@ Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
 
+from calculator import Calculator
 from models.job import Job
 from models.machine import Machine
 from models.operation import Operation
+from models.schedule import Schedule
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -16,7 +18,8 @@ class Problem:
     def __init__(self, machines=None, jobs=None):
         self.machines = machines # [machine, machine, ...]
         self.jobs = jobs # [job, job, ...]
-        self.data = pd.read_excel('jobs_data.xlsx', header=0)
+        #self.data = pd.read_excel('jobs_data.xlsx', header=0)
+        self.data = pd.read_excel('test.xlsx', header=0)
 
     def getMachines(self):
         return self.machines
@@ -32,6 +35,11 @@ class Problem:
     
     def getJobs(self):
         return self.jobs
+    
+    def getJob(self, jobId):
+        for job in self.getJobs():
+            if job.getId() == jobId:
+                return job
     
     def addJob(self, job):
         self.jobs.append(job)
@@ -100,7 +108,6 @@ class Problem:
     
         JOBS = self.getJobs()
         MACHINES = self.getMachines()
-        data = self.getData()
         
         bar_style = {'alpha':1.0, 'lw':25, 'solid_capstyle':'butt'}
         text_style = {'color':'white', 'weight':'bold', 'ha':'center', 'va':'center'}
@@ -116,14 +123,18 @@ problem = Problem()
 problem.loadAndFormatData()
 problem.exportData2Excel()
 
+calculator = Calculator(problem.getMachines(), problem.getJobs())
+calculator.generateAllPossibleSchedules()
+print(calculator.calcTotalOperationTime([1,1,1,2,2,3,3,3], problem))
 
+'''
 for job in problem.getJobs():
     #print('Operations: ', job.getOperations())
     for operation in job.getOperations():
         print('Jeg er koplet til maskin: ', operation.getMachine(), ' og varer ', operation.getDuration())
 
 for machine in problem.getMachines():
-    print('Jeg er maskin nr: ', machine.getId())
+    print('Jeg er maskin nr: ', machine.getId())'''
 
 
 

@@ -3,6 +3,7 @@ Torstein Heltne Hovde
 Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
+import copy
 
 class Job:
 
@@ -15,12 +16,19 @@ class Job:
                                  if these are to be performed on the same machine, one of them need to be moved their elapsed time amount.
     '''
 
-    def __init__(self, id, operations=[], start=None, stop=None):
+    def __init__(self, id, operations=[], start=None, stop=None, operationNr=0):
         self.id = id
         self.operations = operations # [operation_object, operation_object,..]
         self.start = start
         self.stop = stop
-    
+        self.operationNr = operationNr
+
+    def getOperationNr(self):
+        return self.operationNr
+
+    def setOperationNr(self,operationNr):
+        self.operationNr = operationNr    
+
     def getId(self):
         return self.id
     
@@ -29,6 +37,11 @@ class Job:
     
     def getOperations(self):
         return self.operations
+    
+    def getNextOperation(self, time):
+        for operation in self.getOperations():
+            if operation.getStart() >= time:
+                return operation
     
     def setOperations(self, operations):
         self.operations = operations

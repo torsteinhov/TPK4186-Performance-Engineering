@@ -6,11 +6,12 @@ Simen Eger Heggelund
 
 class Operation:
 
-    def __init__(self, machine, duration, start=None, stop=None):
+    def __init__(self, machine, duration, start=None, stop=None, jobId=None):
         self.machine = machine
         self.duration = duration
         self.start = start
         self.stop = stop
+        self.jobId = jobId
     
     def getDuration(self):
         return self.duration
@@ -35,6 +36,12 @@ class Operation:
     
     def setStop(self, stop):
         self.stop = stop
+    
+    def getJobId(self):
+        return self.jobId
+    
+    def setJobId(self, jobId):
+        self.jobId = jobId
     
     def checkStartStop(self):
         if (self.getStart() + self.getDuration()) == self.getStop() and (self.getStop() - self.getDuration()) == self.getStart():

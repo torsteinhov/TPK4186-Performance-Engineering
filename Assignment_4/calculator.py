@@ -5,6 +5,7 @@ Simen Eger Heggelund
 '''
 import sys
 import random
+import time
 from itertools import permutations
 
 class Calculator:
@@ -98,9 +99,10 @@ class Calculator:
         return max(machineTimes)
 
     
-
+    '''TASK 9'''
     def experimentAllSchedules(self, problem):
 
+        start_timeV1 = time.time()
         allSchedules = self.generateAllPossibleSchedules()
 
         # TODO SHOW EXPERIMENT
@@ -111,15 +113,15 @@ class Calculator:
 
         worstTime = self.calcTotalOperationTime(allSchedules[0], problem)
         bestTime = self.calcTotalOperationTime(allSchedules[0], problem)
-        bestSchedule = None
-        worstSchedule = None
+        bestSchedule = allSchedules[0]
+        worstSchedule = allSchedules[0]
 
         for schedule in allSchedules:
             operationTime = self.calcTotalOperationTime(schedule, problem)
             if operationTime < bestTime:
                 bestSchedule = schedule
                 bestTime = operationTime
-                break
+                
             elif operationTime > worstTime:
                 worstSchedule = schedule
                 worstTime = operationTime
@@ -129,6 +131,8 @@ class Calculator:
         print('\n')
         print(f'The worst schedule for the given problem is: {worstSchedule}')
         print(f'The duration time of the worst schedule is: {worstTime}')
+        print('\n')
+        print(f'The runtime of the brute force algorithm was: {round(time.time() - start_timeV1, 3)} seconds')
 
     '''TASK 10'''
     def gradientDescentV1(self, problem):
@@ -142,22 +146,22 @@ class Calculator:
         makespan = self.calcTotalOperationTime(initialSchedule, problem)
         
         best = True
-        bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+        bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
         #Stop the recursiv call when no better solotuion from neibhours is achieved. 
         while best:
             if bestMakespan < makespan:
-                bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+                bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
             else:
                 best=False
 
         
-        print(f' The best schedule after gradient descent v1 is: {bestNeighbour}')
-        print(f' With a makespan of: {makespan}')
+        print(f'The best schedule after gradient descent v1 is: {bestNeighbour}')
+        print(f'With a makespan of: {makespan}')
 
         return bestNeighbour,makespan
     
+    '''TASK 11'''
     def gradientDescentV2(self, problem, n_initialStates):
-        
         bestNeighbourV2 = None
         bestMakespanV2 = sys.maxsize
 
@@ -165,18 +169,20 @@ class Calculator:
         allSchedules = self.generateAllPossibleSchedules()
 
         for i in range(n_initialStates):
+            alreadyCheckedSchedules=[]
 
             # This is the initial schedule choosed random
             initialSchedule = self.getRandomSchedule(allSchedules)
-
+            alreadyCheckedSchedules.append(initialSchedule)
             makespan = self.calcTotalOperationTime(initialSchedule, problem)
             
             best = True
-            bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+            bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
             #Stop the recursive call when no better solution from neibhours is achieved. 
             while best:
                 if bestMakespan < makespan:
-                    bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+                    bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+                    alreadyCheckedSchedules.append(bestNeighbour)
                 else:
                     best=False
             
@@ -184,13 +190,24 @@ class Calculator:
                 bestMakespanV2 = makespan
                 bestNeighbourV2 = bestNeighbour
 
+        print(f'The best schedule after gradient descent v2 is: {bestNeighbourV2}')
+        print(f'With a makespan of: {bestMakespanV2}')
         
-        print(f' The best schedule after gradient descent v1 is: {bestNeighbourV2}')
-        print(f' With a makespan of: {bestMakespanV2}')
 
         return bestNeighbourV2,bestMakespanV2
+    
+    '''TASK 12'''
+    def experimentalStudyGradientDescent(self, problem, n_initialStates):
 
-    def calculateBestNeighbour(self, schedule, problem, makespan):
+        start_timeV1 = time.time()
+        self.gradientDescentV1(problem)
+        print(f'The runtime of the initial algorithm was: {round(time.time() - start_timeV1, 3)} seconds')
+
+        start_timeV2 = time.time()
+        self.gradientDescentV2(problem, n_initialStates)
+        print(f'The runtime of the improved algorithm was: {round(time.time() - start_timeV2, 3)} seconds')
+
+    def calculateBestNeighbour(self, schedule, problem, makespan, alreadyCheckedSchedule):
         
         neighbours= []
         bestSchedule = schedule
@@ -200,10 +217,13 @@ class Calculator:
                 neighbours.append(neighbour)
 
         for neighbour in neighbours:
-
-            operationTimeNeighbour = self.calcTotalOperationTime(neighbour, problem)
-            if operationTimeNeighbour < makespan:
-                bestSchedule = neighbour
-                makespan = operationTimeNeighbour
             
+            if neighbour not in alreadyCheckedSchedule: 
+                operationTimeNeighbour = self.calcTotalOperationTime(neighbour, problem)
+                if operationTimeNeighbour < makespan:
+                    bestSchedule = neighbour
+                    makespan = operationTimeNeighbour
+            else: 
+                continue
+
         return bestSchedule, makespan

@@ -15,11 +15,12 @@ import pandas as pd
 
 class Problem:
 
-    def __init__(self, machines=None, jobs=None):
+    def __init__(self, machines=None, jobs=None, filename=None):
+        self.filename = filename
         self.machines = machines # [machine, machine, ...]
         self.jobs = jobs # [job, job, ...]
         #self.data = pd.read_excel('jobs_data.xlsx', header=0)
-        self.data = pd.read_excel('test.xlsx', header=0)
+        self.data = pd.read_excel(filename, header=0)
 
     def getMachines(self):
         return self.machines
@@ -103,34 +104,20 @@ class Problem:
         writer = pd.ExcelWriter('exported_data.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False)
         writer.save()
-            
-    def visualize(self):
-    
-        JOBS = self.getJobs()
-        MACHINES = self.getMachines()
-        
-        bar_style = {'alpha':1.0, 'lw':25, 'solid_capstyle':'butt'}
-        text_style = {'color':'white', 'weight':'bold', 'ha':'center', 'va':'center'}
-        colors = ['blue', 'yellow', 'red']
 
-        fig, ax = plt.subplots(1, figsize=(12, 5+(len(JOBS)+len(MACHINES))/4))
-
-        ax.barh(data.operation, data.duration)
-        
-        plt.show()
-
-problem = Problem()
+problem = Problem(filename='test2.xlsx')
 problem.loadAndFormatData()
-problem.exportData2Excel()
+#problem.exportData2Excel()
 
 calculator = Calculator(problem.getMachines(), problem.getJobs())
-calculator.generateAllPossibleSchedules()
-print(calculator.calcTotalOperationTime([1,2,2,3,1,3,1,3], problem))
+#print(calculator.generateAllPossibleSchedules())
+#print(calculator.calcTotalOperationTime([1,2,2,3,1,3,1,3], problem))
 #print(calculator.calcTotalOperationTime([1,3,3,3,1,2,2,1], problem))
 
 calculator.experimentAllSchedules(problem)
 #calculator.gradientDescentV1(problem)
-calculator.gradientDescentV2(problem, 5)
+#calculator.gradientDescentV2(problem, 3)
+calculator.experimentalStudyGradientDescent(problem, n_initialStates=3)
 
 '''
 for job in problem.getJobs():

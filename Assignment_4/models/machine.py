@@ -7,9 +7,44 @@ Simen Eger Heggelund
 class Machine:
 
     '''
+    A class used to represent a machine
+    ...
+    
+    Attributes
+    ----------
+    id : int
+        an integer with the machines' id
+    operations: list 
+        list of operation objects
+    available: boolean
+        true if the machine is available. Otherwise false 
+    
+
+    Methods
+    -------
+
+    getId()
+        gets the machines' id
+    getOperations()
+        get a list of operations 
+    getLastJob()
+        get the machine's last jobb
+    getStart()
+        get the start time
+    isAvailable()
+        check if the machine is available
+    setId(id)
+        sets the machine's id
+    setOperations(operations)
+        set a list of operations
+    addOperation(operation)
+        add a single operation to a machine
+
+
     Assumptions:
         - We assume that all machines have equal capabilities and performance.
         - We assume that we can neglect the travel distance between machines inside the factory. (Importing the layout of the factory would add a new dimensionality of this problem)
+
     '''
 
     def __init__(self, id, available=True):

@@ -8,6 +8,51 @@ import copy
 class Job:
 
     '''
+    A class used to represent a job
+    ...
+    
+    Attributes
+    ----------
+    id : int
+        an integer with the job's id
+    operations: list 
+        list of operation objects
+    start: int
+        an integer representing the start time
+    stop: int
+        an integer representing the stop time
+    operationNr: int
+        an integer representing the operation number
+    
+    
+    Methods
+    -------
+    getOperationNr()
+        gets the operation number
+    getId()
+        gets the job id
+    getOperations()
+        get a list of operations in the current job
+    getNextOperation()
+        get the next operation at a specific time
+    getStart()
+        get the start time
+    getStop()
+        get the stop time
+    setOperationNr(operatinNr)
+        sets the operation number
+    setId(id)
+        sets the job id
+    setOperations(operations)
+        set a list of operations in a job
+    addOperation(operation)
+        add a single operation to a job
+    setStart(start)
+        sets a start time
+    setStop(stop)
+        sets a stop time 
+
+ 
     Constraints:
         Precedence constraints - This comes from the condition that for two consecutive tasks in the same job, we must complete the first one before the second job can be started.
                                  If we use task (0,1) and task (0,2) as example  the start time for task (0,2) must be 1 time unit after the start of task (0,2) => (1,3)

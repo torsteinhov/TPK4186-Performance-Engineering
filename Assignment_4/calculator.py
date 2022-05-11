@@ -25,16 +25,14 @@ class Calculator:
     def setJobs(self, jobs):
         self.jobs = jobs
     
-    def getRandomSchedule(allSchedules):
+    def getRandomSchedule(self, allSchedules):
         index = random.randint(0, len(allSchedules))
         return allSchedules[index]
     
-    def positionSwap(list, p1, p2):
+    def positionSwap(self, list, p1, p2):
 
         copyList = list.copy()
-
-        copyList[p1] = copyList[p2]
-        copyList[p2] = copyList[p1]
+        copyList[p1], copyList[p2] = copyList[p2], copyList[p1]
 
         return copyList
     
@@ -132,17 +130,80 @@ class Calculator:
         print(f'The worst schedule for the given problem is: {worstSchedule}')
         print(f'The duration time of the worst schedule is: {worstTime}')
 
+    '''TASK 10'''
     def gradientDescentV1(self, problem):
         
         # Creates a random schedule based on the problem
-        allSchedules = self.generateAllPossibleSchedules(problem)
+        allSchedules = self.generateAllPossibleSchedules()
 
         # This is the initial schedule choosed random
-        currSchedule = self.getRandomSchedule(allSchedules)
+        initialSchedule = self.getRandomSchedule(allSchedules)
 
-        makespan = self.calcTotalOperationTime(problem, currSchedule)
+        makespan = self.calcTotalOperationTime(initialSchedule, problem)
+        
+        best = True
+        bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+        #Stop the recursiv call when no better solotuion from neibhours is achieved. 
+        while best:
+            if bestMakespan < makespan:
+                bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+            else:
+                best=False
 
-        checkedNeighbours = []
-        currNeighbours = []
-        for 
+        
+        print(f' The best schedule after gradient descent v1 is: {bestNeighbour}')
+        print(f' With a makespan of: {makespan}')
 
+        return bestNeighbour,makespan
+    
+    def gradientDescentV2(self, problem, n_initialStates):
+        
+        bestNeighbourV2 = None
+        bestMakespanV2 = sys.maxsize
+
+        # Creates all possible schedules
+        allSchedules = self.generateAllPossibleSchedules()
+
+        for i in range(n_initialStates):
+
+            # This is the initial schedule choosed random
+            initialSchedule = self.getRandomSchedule(allSchedules)
+
+            makespan = self.calcTotalOperationTime(initialSchedule, problem)
+            
+            best = True
+            bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+            #Stop the recursive call when no better solution from neibhours is achieved. 
+            while best:
+                if bestMakespan < makespan:
+                    bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan)
+                else:
+                    best=False
+            
+            if makespan < bestMakespanV2:
+                bestMakespanV2 = makespan
+                bestNeighbourV2 = bestNeighbour
+
+        
+        print(f' The best schedule after gradient descent v1 is: {bestNeighbourV2}')
+        print(f' With a makespan of: {bestMakespanV2}')
+
+        return bestNeighbourV2,bestMakespanV2
+
+    def calculateBestNeighbour(self, schedule, problem, makespan):
+        
+        neighbours= []
+        bestSchedule = schedule
+        for i in range(1, len(schedule)):
+            if schedule[i]!=schedule[i-1]:
+                neighbour = self.positionSwap(schedule, i-1, i)
+                neighbours.append(neighbour)
+
+        for neighbour in neighbours:
+
+            operationTimeNeighbour = self.calcTotalOperationTime(neighbour, problem)
+            if operationTimeNeighbour < makespan:
+                bestSchedule = neighbour
+                makespan = operationTimeNeighbour
+            
+        return bestSchedule, makespan

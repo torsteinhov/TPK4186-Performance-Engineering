@@ -125,7 +125,10 @@ problem.exportData2Excel()
 
 calculator = Calculator(problem.getMachines(), problem.getJobs())
 calculator.generateAllPossibleSchedules()
-print(calculator.calcTotalOperationTime([1,1,1,2,2,3,3,3], problem))
+print(calculator.calcTotalOperationTime([1,2,2,3,1,3,1,3], problem))
+#print(calculator.calcTotalOperationTime([1,3,3,3,1,2,2,1], problem))
+
+calculator.experimentAllSchedules(problem)
 
 '''
 for job in problem.getJobs():

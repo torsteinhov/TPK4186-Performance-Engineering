@@ -17,7 +17,6 @@ class Schedule:
         a list with job objects
     operationsJobId: list
         a list
-    
 
     Methods
     -------

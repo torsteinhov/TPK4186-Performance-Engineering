@@ -108,36 +108,6 @@ class Problem:
         writer = pd.ExcelWriter('exported_data.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False)
         writer.save()
-    
-    '''TASK 13'''
-    def loadAndFormatUncertainData(self):
-        jobs = []
-
-        # Gets the job number of the last element in the Job column
-        numerOfJobs=self.data['Job'].max()
-        for i in range(1,numerOfJobs+1):
-            jobs.append(Job(i,operations=[]))
-            
-        machines = []
-        machinesID=[]
-
-        for index, row in self.getData().iterrows():
-
-            operation=[]
-            for job in jobs:
-                if row['Job']==job.getId():
-                    uncertain_duration = np.random.triangular(row['Duration']*0.25, row['Duration'], row['Duration']*1.75) 
-                    operation = Operation(row['Machine'], uncertain_duration)
-                    job.addOperation(operation)    
-            
-            machineID=row["Machine"]
-            
-            if machineID not in machinesID:
-                machinesID.append(machineID)
-                machines.append(Machine(row["Machine"]))
-
-        self.setJobs(jobs)
-        self.setMachines(machines)
 
 problem = Problem(filename='test2.xlsx')
 problem.loadAndFormatData()
@@ -153,45 +123,4 @@ calculator = Calculator(problem.getMachines(), problem.getJobs())
 #calculator.gradientDescentV1(problem)
 #calculator.gradientDescentV2(problem, 3)
 #calculator.experimentalStudyGradientDescent(problem, n_initialStates=3)
-calculator.experimentalStudyUncertainties(problem, n_initialStates=3, leftTail=0.25, rightTail=1.75, allowedError=0.01)
-
-'''
-for job in problem.getJobs():
-    #print('Operations: ', job.getOperations())
-    for operation in job.getOperations():
-        print('Jeg er koplet til maskin: ', operation.getMachine(), ' og varer ', operation.getDuration())
-
-for machine in problem.getMachines():
-    print('Jeg er maskin nr: ', machine.getId())'''
-
-
-
-'''EKSPERIMENTERING MED DATASTRUKTUREN'''
-
-'''machine1 = Machine('M-1')
-machine2 = Machine('M-2')
-machines = [machine1, machine2]
-
-operation1 = Operation('O-1', 2)
-operation2 = Operation('O-2', 4)
-operation3 = Operation('O-3', 1)
-operations1 = [operation1, operation2, operation3]
-
-job1 = Job('J-1',operations1)
-operations2 = [operation1, operation3]
-job2 = Job('J-2',operations2)
-jobs = [job1, job2]
-
-for operation in job1.getOperations():
-    print(f'Operation: {operation.getId()} - duration: {operation.getDuration()}')
-
-problem = Problem(machines, jobs)
-for job in problem.getJobs():
-    duration = 0
-    for operation in job.getOperations():
-        duration += operation.getDuration()
-
-    print(f'Job: {job.getId()} lasts for a total of {duration} seconds')
-
-problem.printData()
-#problem.visualize()'''
+#calculator.experimentalStudyUncertainties(problem, n_initialStates=3, leftTail=0.5, rightTail=1.5, allowedError=0.01)

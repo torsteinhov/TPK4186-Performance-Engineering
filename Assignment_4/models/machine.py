@@ -12,8 +12,8 @@ class Machine:
     
     Attributes
     ----------
-    id : int
-        an integer with the machines' id
+    id : string
+        a string with the machines' id
     operations: list 
         list of operation objects
     available: boolean

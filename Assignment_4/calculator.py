@@ -13,7 +13,7 @@ class Calculator:
 
     '''
     A class used to calculate the total operation time of a schedule and the makespan of a problem. The class also includes a gradient descendant
-    algorithm and a stochastic simulation method.  
+    algorithm and a method for stochastic simulations.  
     ...
     
     Attributes
@@ -25,11 +25,40 @@ class Calculator:
         
     Methods
     -------
-
+    getMachines()
+        gets the machines
     getJobs()
         gets the jobs
+    setMachines(machine)
+        sets the machines
     setJobs(jobs)
         sets the jobs
+    getRandomSchedule()
+        gets a random schedule
+    positionSwap(list, p1, p2)
+        swaps position for checking neighbours in gradient descent
+    fromTuple2List
+        creates a list from candidate schedules 
+    generateAllPossibleSchedules()
+        generates all possible schedules
+    generateAllPossibleSchedulesWithUncertainties(leftTail, rightTail)
+        generates all possible schedules with uncertainties
+    calcTotalOperationTime(schedule, problem)
+        calculates the total operation time
+    calcTotalUncertainOperationTime(schedule, problem)
+        calculates the total operation time with uncertainties
+    experimentAllSchedules(problem)
+        gives the best and worst schedule, with their corresponding duration, for a given problem using a brute force algorithm.
+    gradientDescentV1(problem)
+
+
+    gradientDescentV2(problem, n_initialStates)
+    experimentalStudyGradientDescent(problem, n_initialStates)
+    gradientDescentV2Uncertainties(problem, n_initialStates, leftTail, rightTail)
+    experimentalStudyUncertainties(problem, n_initialStates, leftTail, rightTail, allowedError)
+    calculateBestNeighbour(schedule, problem, makespan, alreadyCheckedSchedule)
+    calculateBestNeighbourWithUncertainty(schedule, problem, makespan, alreadyCheckedSchedule)
+    
     '''
 
     def __init__(self, machines, jobs):
@@ -90,7 +119,6 @@ class Calculator:
         for job in self.getJobs():
             for operation in job.getOperations():
                 uncertain_duration = np.random.triangular(operation.getDuration()*leftTail, operation.getDuration(), operation.getDuration()*rightTail)
-                #print('uncertain_duration: ', uncertain_duration)
                 operation.setUncertainDuration(uncertain_duration)
 
                 simpleSchedule.append(job.getId())
@@ -135,7 +163,6 @@ class Calculator:
                 else:
                     machineTimes[operation.getMachine()-1] += operation.getDuration()
 
-            #print('machineTimes: ', machineTimes)
             job.setOperationNr(operationNr+1)
 
         return max(machineTimes)
@@ -169,7 +196,6 @@ class Calculator:
                 else:
                     machineTimes[operation.getMachine()-1] += operation.getUncertainDuration()
 
-            #print('machineTimes: ', machineTimes)
             job.setOperationNr(operationNr+1)
 
         return max(machineTimes)
@@ -180,8 +206,6 @@ class Calculator:
 
         start_timeV1 = time.time()
         allSchedules = self.generateAllPossibleSchedules()
-
-        # TODO SHOW EXPERIMENT
 
         # Would like to demonstrate the length of different schedules
         print("The number of different schedules is {}".format(len(allSchedules)))
@@ -300,11 +324,11 @@ class Calculator:
             makespan = self.calcTotalUncertainOperationTime(initialSchedule, problem)
             
             best = True
-            bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+            bestNeighbour,bestMakespan = self.calculateBestNeighbourWithUncertainty(initialSchedule, problem, makespan, alreadyCheckedSchedules)
             #Stop the recursive call when no better solution from neibhours is achieved. 
             while best:
                 if bestMakespan < makespan:
-                    bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+                    bestNeighbour, makespan = self.calculateBestNeighbourWithUncertainty(initialSchedule, problem, makespan, alreadyCheckedSchedules)
                     alreadyCheckedSchedules.append(bestNeighbour)
                 else:
                     best=False
@@ -329,15 +353,18 @@ class Calculator:
         start_timeV2 = time.time()
         makespanUncertaintyTimeList = []
         avg = 0.0
+        numExecutions = 0
         
         while not ((avg < round(bestMakespan*(1+allowedError),2)) and (avg > round(bestMakespan*(1-allowedError),2))):
             uncertainSchedule, uncertainMakespan = self.gradientDescentV2Uncertainties(problem, n_initialStates, leftTail, rightTail)
             makespanUncertaintyTimeList.append(uncertainMakespan)
             avg = sum(makespanUncertaintyTimeList)/len(makespanUncertaintyTimeList)
-            print("Avg:",avg)
+            numExecutions += 1
+            print(f'The average is now {avg}')
 
         print('\n')
         print(f'The runtime of the algorithm with convergence of uncertain durations was: {round(time.time() - start_timeV2, 3)} seconds\n')
+        print(f'The amount of iterations required to converge with allowed error {allowedError}, was: {numExecutions}')
         print(f'The different makespans during the calculations was the following: {makespanUncertaintyTimeList}, with the average makespan: {avg}')
 
     def calculateBestNeighbour(self, schedule, problem, makespan, alreadyCheckedSchedule):
@@ -353,6 +380,27 @@ class Calculator:
             
             if neighbour not in alreadyCheckedSchedule: 
                 operationTimeNeighbour = self.calcTotalOperationTime(neighbour, problem)
+                if operationTimeNeighbour < makespan:
+                    bestSchedule = neighbour
+                    makespan = operationTimeNeighbour
+            else: 
+                continue
+
+        return bestSchedule, makespan
+
+    def calculateBestNeighbourWithUncertainty(self, schedule, problem, makespan, alreadyCheckedSchedule):
+        
+        neighbours= []
+        bestSchedule = schedule
+        for i in range(1, len(schedule)):
+            if schedule[i]!=schedule[i-1]:
+                neighbour = self.positionSwap(schedule, i-1, i)
+                neighbours.append(neighbour)
+
+        for neighbour in neighbours:
+            
+            if neighbour not in alreadyCheckedSchedule: 
+                operationTimeNeighbour = self.calcTotalUncertainOperationTime(neighbour, problem)
                 if operationTimeNeighbour < makespan:
                     bestSchedule = neighbour
                     makespan = operationTimeNeighbour

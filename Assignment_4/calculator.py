@@ -6,9 +6,31 @@ Simen Eger Heggelund
 import sys
 import random
 import time
+import numpy as np
 from itertools import permutations
 
 class Calculator:
+
+    '''
+    A class used to calculate the total operation time of a schedule and the makespan of a problem. The class also includes a gradient descendant
+    algorithm and a stochastic simulation method.  
+    ...
+    
+    Attributes
+    ----------
+    jobs : list
+        a list with job objects
+    machines: list
+        a list of machine object
+        
+    Methods
+    -------
+
+    getJobs()
+        gets the jobs
+    setJobs(jobs)
+        sets the jobs
+    '''
 
     def __init__(self, machines, jobs):
         self.jobs = jobs
@@ -61,6 +83,26 @@ class Calculator:
         allCandidateSchedulesList2 = self.fromTuple2List(allCandidateSchedulesList)
 
         return allCandidateSchedulesList2
+    
+    '''TASK 13'''
+    def generateAllPossibleSchedulesWithUncertainties(self,leftTail,rightTail):
+        simpleSchedule=[]
+        for job in self.getJobs():
+            for operation in job.getOperations():
+                uncertain_duration = np.random.triangular(operation.getDuration()*leftTail, operation.getDuration(), operation.getDuration()*rightTail)
+                #print('uncertain_duration: ', uncertain_duration)
+                operation.setUncertainDuration(uncertain_duration)
+
+                simpleSchedule.append(job.getId())
+        
+        allCandidateSchedules=list(permutations(simpleSchedule))
+        allCandidateSchedulesList = self.fromTuple2List(allCandidateSchedules)
+
+        # REMOVE DUPLICATES
+        allCandidateSchedulesList = list(set(map(lambda i: tuple(i), allCandidateSchedulesList)))
+        allCandidateSchedulesList2 = self.fromTuple2List(allCandidateSchedulesList)
+
+        return allCandidateSchedulesList2
 
     '''TASK 7'''
     # schedule = [1,2,2,3,1,3,1,3]
@@ -92,6 +134,40 @@ class Calculator:
                     machineTimes[operation.getMachine()-1] = prevJobsTime + operation.getDuration()
                 else:
                     machineTimes[operation.getMachine()-1] += operation.getDuration()
+
+            #print('machineTimes: ', machineTimes)
+            job.setOperationNr(operationNr+1)
+
+        return max(machineTimes)
+    
+    def calcTotalUncertainOperationTime(self, schedule, problem):
+
+        for machine in problem.getMachines():
+            machine.setOperations([])
+        
+        for job in problem.getJobs():
+            job.setOperationNr(0)
+
+        machineTimes = [0]*len(problem.getMachines()) # [time machine 1, time machine 2, ...]
+
+        for jobId in schedule:
+            
+            job = problem.getJob(jobId)
+            operationNr = job.getOperationNr()
+            operation = job.getOperations()[operationNr]
+
+            if job.getOperationNr() == 0:
+                machineTimes[operation.getMachine()-1] += operation.getUncertainDuration()
+            elif job.getOperationNr() > 0:
+
+                prevJobsTime = 0
+                for i in range(job.getOperationNr()):
+                    prevJobsTime += job.getOperations()[i].getUncertainDuration()
+
+                if prevJobsTime > machineTimes[operation.getMachine()-1]:
+                    machineTimes[operation.getMachine()-1] = prevJobsTime + operation.getUncertainDuration()
+                else:
+                    machineTimes[operation.getMachine()-1] += operation.getUncertainDuration()
 
             #print('machineTimes: ', machineTimes)
             job.setOperationNr(operationNr+1)
@@ -206,6 +282,63 @@ class Calculator:
         start_timeV2 = time.time()
         self.gradientDescentV2(problem, n_initialStates)
         print(f'The runtime of the improved algorithm was: {round(time.time() - start_timeV2, 3)} seconds')
+    
+    
+    def gradientDescentV2Uncertainties(self, problem, n_initialStates, leftTail, rightTail): # tails given as a decimal representing percentage
+        bestNeighbourV2 = None
+        bestMakespanV2 = sys.maxsize
+
+        # Creates all possible schedules
+        allSchedules = self.generateAllPossibleSchedulesWithUncertainties(leftTail=leftTail, rightTail=rightTail)
+
+        for i in range(n_initialStates):
+            alreadyCheckedSchedules=[]
+
+            # This is the initial schedule choosed random
+            initialSchedule = self.getRandomSchedule(allSchedules)
+            alreadyCheckedSchedules.append(initialSchedule)
+            makespan = self.calcTotalUncertainOperationTime(initialSchedule, problem)
+            
+            best = True
+            bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+            #Stop the recursive call when no better solution from neibhours is achieved. 
+            while best:
+                if bestMakespan < makespan:
+                    bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+                    alreadyCheckedSchedules.append(bestNeighbour)
+                else:
+                    best=False
+            
+            if makespan < bestMakespanV2:
+                bestMakespanV2 = makespan
+                bestNeighbourV2 = bestNeighbour
+
+        print(f'The best schedule after gradient descent v2 with uncertainties is: {bestNeighbourV2}')
+        print(f'With a makespan of: {bestMakespanV2}')
+        
+
+        return bestNeighbourV2,bestMakespanV2
+
+    '''TASK 14 & 15'''
+    def experimentalStudyUncertainties(self, problem, n_initialStates, leftTail, rightTail, allowedError):
+
+        start_timeV1 = time.time()
+        bestSchedule, bestMakespan = self.gradientDescentV2(problem, n_initialStates)
+        print(f'The runtime of the algorithm with determined durations was: {round(time.time() - start_timeV1, 3)} seconds\n')
+
+        start_timeV2 = time.time()
+        makespanUncertaintyTimeList = []
+        avg = 0.0
+        
+        while not ((avg < round(bestMakespan*(1+allowedError),2)) and (avg > round(bestMakespan*(1-allowedError),2))):
+            uncertainSchedule, uncertainMakespan = self.gradientDescentV2Uncertainties(problem, n_initialStates, leftTail, rightTail)
+            makespanUncertaintyTimeList.append(uncertainMakespan)
+            avg = sum(makespanUncertaintyTimeList)/len(makespanUncertaintyTimeList)
+            print("Avg:",avg)
+
+        print('\n')
+        print(f'The runtime of the algorithm with convergence of uncertain durations was: {round(time.time() - start_timeV2, 3)} seconds\n')
+        print(f'The different makespans during the calculations was the following: {makespanUncertaintyTimeList}, with the average makespan: {avg}')
 
     def calculateBestNeighbour(self, schedule, problem, makespan, alreadyCheckedSchedule):
         

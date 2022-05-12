@@ -12,8 +12,11 @@ from models.schedule import Schedule
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import random
 
 class Problem:
+
+
 
     def __init__(self, machines=None, jobs=None, filename=None):
         self.filename = filename
@@ -80,6 +83,7 @@ class Problem:
             operation=[]
             for job in jobs:
                 if row['Job']==job.getId():
+
                     operation = Operation(row['Machine'], row['Duration'])
                     job.addOperation(operation)    
             
@@ -104,9 +108,40 @@ class Problem:
         writer = pd.ExcelWriter('exported_data.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False)
         writer.save()
+    
+    '''TASK 13'''
+    def loadAndFormatUncertainData(self):
+        jobs = []
+
+        # Gets the job number of the last element in the Job column
+        numerOfJobs=self.data['Job'].max()
+        for i in range(1,numerOfJobs+1):
+            jobs.append(Job(i,operations=[]))
+            
+        machines = []
+        machinesID=[]
+
+        for index, row in self.getData().iterrows():
+
+            operation=[]
+            for job in jobs:
+                if row['Job']==job.getId():
+                    uncertain_duration = np.random.triangular(row['Duration']*0.25, row['Duration'], row['Duration']*1.75) 
+                    operation = Operation(row['Machine'], uncertain_duration)
+                    job.addOperation(operation)    
+            
+            machineID=row["Machine"]
+            
+            if machineID not in machinesID:
+                machinesID.append(machineID)
+                machines.append(Machine(row["Machine"]))
+
+        self.setJobs(jobs)
+        self.setMachines(machines)
 
 problem = Problem(filename='test2.xlsx')
 problem.loadAndFormatData()
+#problem.loadAndFormatUncertainData()
 #problem.exportData2Excel()
 
 calculator = Calculator(problem.getMachines(), problem.getJobs())
@@ -114,10 +149,11 @@ calculator = Calculator(problem.getMachines(), problem.getJobs())
 #print(calculator.calcTotalOperationTime([1,2,2,3,1,3,1,3], problem))
 #print(calculator.calcTotalOperationTime([1,3,3,3,1,2,2,1], problem))
 
-calculator.experimentAllSchedules(problem)
+#calculator.experimentAllSchedules(problem)
 #calculator.gradientDescentV1(problem)
 #calculator.gradientDescentV2(problem, 3)
-calculator.experimentalStudyGradientDescent(problem, n_initialStates=3)
+#calculator.experimentalStudyGradientDescent(problem, n_initialStates=3)
+calculator.experimentalStudyUncertainties(problem, n_initialStates=3, leftTail=0.25, rightTail=1.75, allowedError=0.01)
 
 '''
 for job in problem.getJobs():

@@ -34,7 +34,7 @@ class Operation:
     getDuration()
         gets the operations' duration
     getUncertainDuration()
-        LARS SKRIV HER
+        gets the uncertain duration
     getMachine()
         get the machine used in the operation
     getStart()
@@ -46,7 +46,7 @@ class Operation:
     setDuration(duration)
         sets the duration
     setUncertainDuration(uncertainDuration)
-        LARS SKRIV HER
+        sets the uncertain duration 
     setMachine(machine)
         sets the machine to be used
     setStart(start)

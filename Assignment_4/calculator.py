@@ -7,7 +7,9 @@ import sys
 import random
 import time
 import numpy as np
+import pandas as pd
 from itertools import permutations
+from lightgbm import LGBMRegressor
 
 class Calculator:
 
@@ -50,15 +52,25 @@ class Calculator:
     experimentAllSchedules(problem)
         gives the best and worst schedule, with their corresponding duration, for a given problem using a brute force algorithm.
     gradientDescentV1(problem)
-
-
+        HHHhhhhHHHHHHHH
     gradientDescentV2(problem, n_initialStates)
+        HHHhhhhHHHHHHHH
     experimentalStudyGradientDescent(problem, n_initialStates)
+        HHHhhhhHHHHHHHH
     gradientDescentV2Uncertainties(problem, n_initialStates, leftTail, rightTail)
+        HHHhhhhHHHHHHHH
     experimentalStudyUncertainties(problem, n_initialStates, leftTail, rightTail, allowedError)
+        HHHhhhhHHHHHHHH
     calculateBestNeighbour(schedule, problem, makespan, alreadyCheckedSchedule)
+        HHHhhhhHHHHHHHH
     calculateBestNeighbourWithUncertainty(schedule, problem, makespan, alreadyCheckedSchedule)
-    
+        HHHhhhhHHHHHHHH
+    gradientDescentUncertaintiesWithML(problem, n_initialStates, leftTail, rightTail)
+        HHHhhhhHHHHHHHH
+    calculateBestNeighbourWithUncertaintyML(schedule, problem, makespan, alreadyCheckedSchedule)
+        HHHhhhhHHHHHHHH
+    createPandasDataframe(problem, calculatedSchedules, createColumns=True)
+        HhhhhhhhHHHHH
     '''
 
     def __init__(self, machines, jobs):
@@ -80,6 +92,11 @@ class Calculator:
     def getRandomSchedule(self, allSchedules):
         index = random.randint(0, len(allSchedules))
         return allSchedules[index]
+    
+    def createRandomSchedule(self, schedule):
+        shuffleSchedule = schedule.copy()
+        random.shuffle(shuffleSchedule)
+        return shuffleSchedule
     
     def positionSwap(self, list, p1, p2):
 
@@ -113,8 +130,8 @@ class Calculator:
 
         return allCandidateSchedulesList2
     
-    '''TASK 13'''
-    def generateAllPossibleSchedulesWithUncertainties(self,leftTail,rightTail):
+    
+    def generateUncertainDurationSchedule(self, leftTail, rightTail):
         simpleSchedule=[]
         for job in self.getJobs():
             for operation in job.getOperations():
@@ -123,6 +140,22 @@ class Calculator:
 
                 simpleSchedule.append(job.getId())
         
+        return simpleSchedule
+    
+    def generateSimpleSchedule(self):
+        simpleSchedule=[]
+        for job in self.getJobs():
+            for operation in job.getOperations():
+                simpleSchedule.append(job.getId())
+        
+        return simpleSchedule
+    
+    '''TASK 13'''
+    def generateAllPossibleSchedulesWithUncertainties(self):
+        simpleSchedule=[]
+        for job in self.getJobs():
+            simpleSchedule.append(job.getId())
+
         allCandidateSchedules=list(permutations(simpleSchedule))
         allCandidateSchedulesList = self.fromTuple2List(allCandidateSchedules)
 
@@ -237,20 +270,21 @@ class Calculator:
     '''TASK 10'''
     def gradientDescentV1(self, problem):
         
-        # Creates a random schedule based on the problem
-        allSchedules = self.generateAllPossibleSchedules()
 
         # This is the initial schedule choosed random
-        initialSchedule = self.getRandomSchedule(allSchedules)
+        simpleSchedule = self.generateSimpleSchedule()
+        initialSchedule = self.createRandomSchedule(simpleSchedule)
 
         makespan = self.calcTotalOperationTime(initialSchedule, problem)
         
         best = True
-        bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
+        bestNeighbour,bestNeighbourMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
         #Stop the recursiv call when no better solotuion from neibhours is achieved. 
         while best:
-            if bestMakespan < makespan:
-                bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
+            if bestNeighbourMakespan < makespan:
+                makespan=bestNeighbourMakespan
+                bestNeighbour, bestNeighbourMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
+
             else:
                 best=False
 
@@ -266,22 +300,23 @@ class Calculator:
         bestMakespanV2 = sys.maxsize
 
         # Creates all possible schedules
-        allSchedules = self.generateAllPossibleSchedules()
+        simpleSchedule = self.generateSimpleSchedule()
 
         for i in range(n_initialStates):
             alreadyCheckedSchedules=[]
 
             # This is the initial schedule choosed random
-            initialSchedule = self.getRandomSchedule(allSchedules)
+            initialSchedule = self.createRandomSchedule(simpleSchedule)
             alreadyCheckedSchedules.append(initialSchedule)
             makespan = self.calcTotalOperationTime(initialSchedule, problem)
             
             best = True
-            bestNeighbour,bestMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+            bestNeighbour, bestNeighbourMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
             #Stop the recursive call when no better solution from neibhours is achieved. 
             while best:
-                if bestMakespan < makespan:
-                    bestNeighbour, makespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+                if bestNeighbourMakespan < makespan:
+                    makespan=bestNeighbourMakespan
+                    bestNeighbour, bestNeighbourMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
                     alreadyCheckedSchedules.append(bestNeighbour)
                 else:
                     best=False
@@ -312,23 +347,23 @@ class Calculator:
         bestNeighbourV2 = None
         bestMakespanV2 = sys.maxsize
 
-        # Creates all possible schedules
-        allSchedules = self.generateAllPossibleSchedulesWithUncertainties(leftTail=leftTail, rightTail=rightTail)
+        simpleSchedule = self.generateUncertainDurationSchedule(leftTail, rightTail)
 
         for i in range(n_initialStates):
             alreadyCheckedSchedules=[]
 
             # This is the initial schedule choosed random
-            initialSchedule = self.getRandomSchedule(allSchedules)
+            initialSchedule = self.createRandomSchedule(simpleSchedule)
             alreadyCheckedSchedules.append(initialSchedule)
             makespan = self.calcTotalUncertainOperationTime(initialSchedule, problem)
             
             best = True
-            bestNeighbour,bestMakespan = self.calculateBestNeighbourWithUncertainty(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+            bestNeighbour,bestNeighbourMakespan = self.calculateBestNeighbourWithUncertainty(initialSchedule, problem, makespan, alreadyCheckedSchedules)
             #Stop the recursive call when no better solution from neibhours is achieved. 
             while best:
-                if bestMakespan < makespan:
-                    bestNeighbour, makespan = self.calculateBestNeighbourWithUncertainty(initialSchedule, problem, makespan, alreadyCheckedSchedules)
+                if bestNeighbourMakespan < makespan:
+                    makespan=bestNeighbourMakespan
+                    bestNeighbour, bestNeighbourMakespan = self.calculateBestNeighbour(initialSchedule, problem, makespan, alreadyCheckedSchedule=[])
                     alreadyCheckedSchedules.append(bestNeighbour)
                 else:
                     best=False
@@ -408,3 +443,142 @@ class Calculator:
                 continue
 
         return bestSchedule, makespan
+
+    '''TASK 17'''
+    def gradientDescentUncertaintiesWithML(self, problem, n_initialStates, leftTail, rightTail, trainingSize): # tails given as a decimal representing percentage
+        bestNeighbourV2 = None
+        bestMakespanV2 = sys.maxsize
+        unTrained = True
+
+        # Initialize a schedule where uncertain durations are set
+        simpleSchedule = self.generateUncertainDurationSchedule(leftTail=leftTail, rightTail=rightTail)
+
+        calculatedSchedules=[]
+        for i in range(n_initialStates):
+            alreadyNeighbourSchedules=[]
+
+            # This is the initial schedule choosed random
+            initialSchedule = self.createRandomSchedule(simpleSchedule)
+            alreadyNeighbourSchedules.append(initialSchedule)
+            makespan = self.calcTotalUncertainOperationTime(initialSchedule, problem)
+            tempInit=initialSchedule.copy()
+            tempInit.append(makespan)
+            calculatedSchedules.append(tempInit)
+
+            best = True
+            bestNeighbour,bestMakespan, x = self.calculateBestNeighbourWithUncertaintyML(initialSchedule, problem, makespan, alreadyNeighbourSchedules)
+            for el in x:
+                calculatedSchedules.append(el)
+            #Stop the recursive call when no better solution from neibhours is achieved. 
+            while best:
+
+                if len(calculatedSchedules) > trainingSize and unTrained:
+
+                    dataframe = pd.DataFrame(calculatedSchedules)
+                    print(dataframe)
+                    columns = []
+                    for i in range(len(dataframe.iloc[0])):
+                        if i == len(dataframe.loc[0])-1:
+                            columns.append('Target')
+                            break
+                        columns.append('Attribute_'+str(i+1))
+
+                    dataframe.columns = columns
+
+                    X = dataframe.iloc[:, dataframe.columns != 'Target']
+                    y = dataframe['Target']
+
+                    lgbm = LGBMRegressor()
+                    lgbm.fit(X,y)
+
+                    unTrained = False
+
+                if len(calculatedSchedules) > trainingSize and not unTrained:
+                    if bestMakespan < makespan:
+                        bestNeighbour, makespan, neighboursCalced = self.estimateBestNeighbourWithUncertaintyML(initialSchedule, makespan, alreadyNeighbourSchedules, lgbm)
+                        bestMakespan = makespan
+                        alreadyNeighbourSchedules.append(bestNeighbour)
+                        for el in neighboursCalced:
+                            calculatedSchedules.append(el)
+                    else:
+                        best=False
+                
+                else:
+                    if bestMakespan < makespan:
+                        bestNeighbour, makespan, neighbours = self.calculateBestNeighbourWithUncertaintyML(initialSchedule, problem, makespan, alreadyNeighbourSchedules)
+                        bestMakespan = makespan
+                        alreadyNeighbourSchedules.append(bestNeighbour)
+                        for el in neighbours:
+                            calculatedSchedules.append(el)
+                    else:
+                        best=False
+            
+            if makespan < bestMakespanV2:
+                bestMakespanV2 = makespan
+                bestNeighbourV2 = bestNeighbour
+
+        print(f'The number of calculated schedules is: {len(calculatedSchedules)}')
+        print(f'The best schedule after gradient descent with uncertainties and machine learning is: {bestNeighbourV2}')
+        print(f'With an estimated makespan of: {bestMakespanV2}')
+
+        return bestNeighbourV2,bestMakespanV2
+
+    def calculateBestNeighbourWithUncertaintyML(self, schedule, problem, makespan, alreadyCheckedSchedule):
+        
+        neighbours= []
+        bestSchedule = schedule
+        for i in range(1, len(schedule)):
+            if schedule[i]!=schedule[i-1]:
+                neighbour = self.positionSwap(schedule, i-1, i)
+                neighbours.append(neighbour)
+                
+        neighboursCalced=[]
+        for neighbour in neighbours:
+        
+            if neighbour not in alreadyCheckedSchedule:
+
+                operationTimeNeighbour = self.calcTotalUncertainOperationTime(neighbour, problem)
+                tempNeighbour = neighbour.copy()
+                tempNeighbour.append(operationTimeNeighbour)
+                neighboursCalced.append(tempNeighbour) 
+                if operationTimeNeighbour < makespan:
+                    bestSchedule = neighbour
+                    makespan = operationTimeNeighbour
+            else:
+                continue
+
+        return bestSchedule, makespan, neighboursCalced
+    
+    def estimateBestNeighbourWithUncertaintyML(self, schedule, makespan, alreadyCheckedSchedule, lgbm):
+        
+        neighbours= []
+        bestSchedule = schedule
+        for i in range(1, len(schedule)):
+            if schedule[i]!=schedule[i-1]:
+                neighbour = self.positionSwap(schedule, i-1, i)
+                neighbours.append(neighbour)
+                
+        neighboursCalced=[]
+        for neighbour in neighbours:
+        
+            if neighbour not in alreadyCheckedSchedule:
+                
+                newData = pd.DataFrame(neighbour)
+                newData = newData.transpose()
+                operationTimeNeighbour = lgbm.predict(newData)
+
+                tempNeighbour = neighbour.copy()
+                tempNeighbour.append(operationTimeNeighbour[0])
+                neighboursCalced.append(tempNeighbour) 
+                if operationTimeNeighbour < makespan:
+                    bestSchedule = neighbour
+                    makespan = operationTimeNeighbour
+            else:
+                continue
+
+        return bestSchedule, makespan, neighboursCalced
+
+
+###Lage dataset over alle regna schedules
+###Når datasettet passerer en viss størrrelse, tren en ML algoritme på dataen
+###Bruk ML prediksjon i steden for å kalkulere scoren til en schedule. 

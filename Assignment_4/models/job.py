@@ -110,7 +110,3 @@ class Job:
     
     def setStop(self, stop):
         self.stop = stop
-    
-
-    
-    

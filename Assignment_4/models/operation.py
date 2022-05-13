@@ -105,5 +105,3 @@ class Operation:
             return True
         else:
             return False
-    
-    

@@ -4,6 +4,10 @@ Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
 
+'''
+IT IS VERY IMPORTANT THAT THE RESULTS OF THIS CODE IS PUT IN CONTEXT WITH THE ATTACHED DOCUMENT
+'''
+
 from calculator import Calculator
 from problem import Problem
 from regression import Regression
@@ -22,28 +26,37 @@ class Run:
     def __init__(self):
         pass
     
-    def task4(self):
+    def task5(self):
         problem = Problem()
         problem.loadAndFormatData('test_data\\test3.xlsx')
+        problem.printData()
+        print('\n')
         problem.printProblem()
+        problem.exportProblem2Excel('test_data\\exported_data.xlsx')
 
     # Show experimentally why this approach is limited to small problems
     def task9(self):
+        print('\n')
         problem = Problem()
         problem.loadAndFormatData('test_data\\test1.xlsx')
         calculator = Calculator(problem.getMachines(), problem.getJobs())
+        print('TEST1:')
         calculator.experimentAllSchedules(problem)
+        print('\n')
 
         # This part takes about 10 seconds to run, hold on
         problem = Problem()
         problem.loadAndFormatData('test_data\\test2.xlsx')
         calculator = Calculator(problem.getMachines(), problem.getJobs())
+        print('TEST2:')
         calculator.experimentAllSchedules(problem)
+        print('\n')
 
         # This part takes about 2 minutes to run, hold on
         problem = Problem()
         problem.loadAndFormatData('test_data\\test3.xlsx')
         calculator = Calculator(problem.getMachines(), problem.getJobs())
+        print('TEST3:')
         calculator.experimentAllSchedules(problem)
     
     def task12(self):
@@ -90,11 +103,13 @@ class Run:
 
         start_timeGD = time.time()
         uncertainSchedule, uncertainMakespan = calculatorML.gradientDescentV2Uncertainties(problemML, n_initialStates=5, leftTail=0.5, rightTail=1.5, doPrint=False)
+        print(f'The best schedule was: {uncertainSchedule}')
         print(f'The makespan of the best schedule was: {uncertainMakespan}')
         print(f'The runtime of the gradient descent algorithm V2 with uncertainties was: {round(time.time() - start_timeGD, 3)} seconds\n')
 
         start_timeML = time.time()
         MLSchedule, MLMakespan = calculatorML.gradientDescentUncertaintiesWithML(problemML, 5, 0.5, 1.5, 1000, doPrint=False)
+        print(f'The best schedule was: {MLSchedule}')
         print(f'The makespan of the best schedule was: {MLMakespan}')
         print(f'The runtime of the gradient descent algorithm with uncertainties and ML was: {round(time.time() - start_timeML, 3)} seconds\n')
 
@@ -102,9 +117,8 @@ class Run:
         
 run = Run()
 
-
-'''UNCOMMENT TO RUN TASK 4'''
-run.task4()
+'''UNCOMMENT TO RUN TASK 5'''
+#run.task5()
 
 '''UNCOMMENT TO RUN TASK 9'''
 #run.task9()

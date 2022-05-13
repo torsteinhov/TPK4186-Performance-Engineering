@@ -137,9 +137,8 @@ class Problem:
         for job in self.getJobs():
             for operation in job.getOperations():
                 operations += 1
-
-        print(':)')        
-        print(f'The job scheduling problem:\nJobs - {len(self.getJobs())} \nOperations - {operations} \nMachines - {len(self.getMachines())}')
+                
+        print(f'This job scheduling problem has {len(self.getJobs())} Jobs, with a total of {operations} Operations and {len(self.getMachines())} Machines.')
         
     def loadAndFormatData(self, filename):
         '''Imports and formats the data from a file'''
@@ -184,14 +183,6 @@ class Problem:
         writer = pd.ExcelWriter(filename, engine='xlsxwriter')
         df.to_excel(writer, index=False)
         writer.save()
-
-
-    def printProblem(self): 
-        jobs=self.getJobs()
-        n_jobs=len(jobs)
-        n_operations=0
-        for job in jobs:
-            continue
 
 problem = Problem()
 #problem.loadAndFormatData('test3.xlsx')

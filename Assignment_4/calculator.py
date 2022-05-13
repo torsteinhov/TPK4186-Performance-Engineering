@@ -383,7 +383,7 @@ class Calculator:
         print(f'The runtime of the improved gradient descent algorithm was: {round(time.time() - start_timeV2, 3)} seconds\n')
     
     
-    def gradientDescentV2Uncertainties(self, problem, n_initialStates, leftTail, rightTail): # tails given as a decimal representing percentage
+    def gradientDescentV2Uncertainties(self, problem, n_initialStates, leftTail, rightTail, doPrint=True): # tails given as a decimal representing percentage
         bestNeighbourV2 = None
         bestMakespanV2 = sys.maxsize
 
@@ -412,8 +412,9 @@ class Calculator:
                 bestMakespanV2 = makespan
                 bestNeighbourV2 = bestNeighbour
 
-        print(f'The best schedule after gradient descent v2 with uncertainties is: {bestNeighbourV2}')
-        print(f'With a makespan of: {bestMakespanV2}')
+        if doPrint:
+            print(f'The best schedule after gradient descent v2 with uncertainties is: {bestNeighbourV2}')
+            print(f'With a makespan of: {bestMakespanV2}')
         
 
         return bestNeighbourV2,bestMakespanV2
@@ -486,7 +487,7 @@ class Calculator:
         return bestSchedule, makespan
 
     '''TASK 17'''
-    def gradientDescentUncertaintiesWithML(self, problem, n_initialStates, leftTail, rightTail, trainingSize): # tails given as a decimal representing percentage
+    def gradientDescentUncertaintiesWithML(self, problem, n_initialStates, leftTail, rightTail, trainingSize, doPrint=True): # tails given as a decimal representing percentage
         bestNeighbourV2 = None
         bestMakespanV2 = sys.maxsize
         unTrained = True
@@ -514,7 +515,8 @@ class Calculator:
             while best:
 
                 if len(calculatedSchedules) > trainingSize and unTrained:
-
+                    
+                    fittingTime = time.time()
                     dataframe = pd.DataFrame(calculatedSchedules)
                     columns = []
                     for i in range(len(dataframe.iloc[0])):
@@ -528,8 +530,10 @@ class Calculator:
                     X = dataframe.iloc[:, dataframe.columns != 'Target']
                     y = dataframe['Target']
 
+                    print('\n')
                     lgbm = LGBMRegressor()
                     lgbm.fit(X,y)
+                    print(f'The runtime of the fitting of the ML model was {round(time.time() - fittingTime, 5)}')
 
                     unTrained = False
 
@@ -557,9 +561,10 @@ class Calculator:
                 bestMakespanV2 = makespan
                 bestNeighbourV2 = bestNeighbour
 
-        print(f'The number of calculated schedules is: {len(calculatedSchedules)}')
-        print(f'The best schedule after gradient descent with uncertainties and machine learning is: {bestNeighbourV2}')
-        print(f'With an estimated makespan of: {bestMakespanV2}')
+        if doPrint:
+            print(f'The number of calculated schedules is: {len(calculatedSchedules)}')
+            print(f'The best schedule after gradient descent with uncertainties and machine learning is: {bestNeighbourV2}')
+            print(f'With an estimated makespan of: {bestMakespanV2}')
 
         return bestNeighbourV2,bestMakespanV2
 

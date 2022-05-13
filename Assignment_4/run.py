@@ -22,6 +22,11 @@ class Run:
     def __init__(self):
         pass
     
+    def task4(self):
+        problem = Problem()
+        problem.loadAndFormatData('test_data\\test3.xlsx')
+        problem.printProblem()
+
     # Show experimentally why this approach is limited to small problems
     def task9(self):
         problem = Problem()
@@ -79,24 +84,27 @@ class Run:
     
     def task18(self):
         problemML = Problem()
-        problemML.createRandomJobScheduling(20, 200, 100, 10, 20)
+        problemML.createRandomJobScheduling(5, 50, 20, 5, 20)
         #problemML.loadAndFormatData('test_data\\test2.xlsx')
         calculatorML = Calculator(problemML.getMachines(), problemML.getJobs())
 
         start_timeGD = time.time()
-        uncertainSchedule, uncertainMakespan = calculatorML.gradientDescentV2Uncertainties(problemML, n_initialStates=5, leftTail=0.5, rightTail=1.5)
+        uncertainSchedule, uncertainMakespan = calculatorML.gradientDescentV2Uncertainties(problemML, n_initialStates=5, leftTail=0.5, rightTail=1.5, doPrint=False)
         print(f'The makespan of the best schedule was: {uncertainMakespan}')
         print(f'The runtime of the gradient descent algorithm V2 with uncertainties was: {round(time.time() - start_timeGD, 3)} seconds\n')
 
         start_timeML = time.time()
-        MLSchedule, MLMakespan = calculatorML.gradientDescentUncertaintiesWithML(problemML, 5, 0.5, 1.5, 100)
+        MLSchedule, MLMakespan = calculatorML.gradientDescentUncertaintiesWithML(problemML, 5, 0.5, 1.5, 1000, doPrint=False)
         print(f'The makespan of the best schedule was: {MLMakespan}')
-        print(f'The runtime of the gradient descent algorithm V2 with uncertainties was: {round(time.time() - start_timeML, 3)} seconds\n')
+        print(f'The runtime of the gradient descent algorithm with uncertainties and ML was: {round(time.time() - start_timeML, 3)} seconds\n')
 
 
         
 run = Run()
 
+
+'''UNCOMMENT TO RUN TASK 4'''
+run.task4()
 
 '''UNCOMMENT TO RUN TASK 9'''
 #run.task9()
@@ -111,4 +119,4 @@ run = Run()
 #run.task16()
 
 '''UNCOMMENT TO RUN TASK 18'''
-run.task18()
+#run.task18()

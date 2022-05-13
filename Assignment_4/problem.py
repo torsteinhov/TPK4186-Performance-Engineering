@@ -53,11 +53,13 @@ class Problem:
         prints the data 
     formatData2
         prints the data in list form
-    loadAndFormatData()
+    createRandomJobScheduling(nrOfJobs, maxOpsPerJob, minOpsPerJob, nrOfMachines, maxDuration)
+        creates a random job scheduling
+    loadAndFormatData(filename)
         This function generates a random job scheduling problem with the given parameters: number of jobs,
         maximum opservations per job, minimium operations per job, number og machines and maximum duration
         of a operation.
-    exporProblem2Excel()
+    exportProblem2Excel(filename)
         exports the data to a Excel-file
 
     '''
@@ -127,12 +129,17 @@ class Problem:
                 operation=Operation(random.randint(0, nrOfMachines),random.randint(1,maxDuration+1))
                 job.addOperation(operation)
                     
-        
-        
         self.setJobs(jobs)
         self.setMachines(machines)
-                
+    
+    def printProblem(self):
+        operations = 0
+        for job in self.getJobs():
+            for operation in job.getOperations():
+                operations += 1
 
+        print(':)')        
+        print(f'The job scheduling problem:\nJobs - {len(self.getJobs())} \nOperations - {operations} \nMachines - {len(self.getMachines())}')
         
     def loadAndFormatData(self, filename):
         '''Imports and formats the data from a file'''

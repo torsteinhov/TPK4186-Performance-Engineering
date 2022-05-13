@@ -4,7 +4,6 @@ Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
 
-
 class Schedule:
     
     '''

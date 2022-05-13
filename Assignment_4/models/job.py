@@ -3,7 +3,6 @@ Torstein Heltne Hovde
 Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
-import copy
 
 class Job:
 

@@ -11,14 +11,6 @@ IT IS VERY IMPORTANT THAT THE RESULTS OF THIS CODE IS PUT IN CONTEXT WITH THE AT
 from calculator import Calculator
 from problem import Problem
 from regression import Regression
-from models.job import Job
-from models.machine import Machine
-from models.operation import Operation
-from models.schedule import Schedule
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import random
 import time
 
 class Run:

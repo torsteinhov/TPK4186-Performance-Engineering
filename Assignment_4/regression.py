@@ -7,10 +7,7 @@ Simen Eger Heggelund
 '''TASK 16'''
 
 from random import random
-import numpy as np
 import pandas as pd
-from calculator import Calculator
-from problem import Problem
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.svm import LinearSVR

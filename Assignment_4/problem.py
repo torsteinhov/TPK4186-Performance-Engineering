@@ -4,13 +4,9 @@ Lars Magnus Johnsen
 Simen Eger Heggelund
 '''
 
-from calculator import Calculator
 from models.job import Job
 from models.machine import Machine
 from models.operation import Operation
-from models.schedule import Schedule
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import random
 
@@ -137,7 +133,7 @@ class Problem:
         for job in self.getJobs():
             for operation in job.getOperations():
                 operations += 1
-                
+
         print(f'This job scheduling problem has {len(self.getJobs())} Jobs, with a total of {operations} Operations and {len(self.getMachines())} Machines.')
         
     def loadAndFormatData(self, filename):

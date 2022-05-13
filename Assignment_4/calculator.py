@@ -14,8 +14,8 @@ from lightgbm import LGBMRegressor
 class Calculator:
 
     '''
-    A class used to calculate the total operation time of a schedule and the makespan of a problem. The class also includes a gradient descendant
-    algorithm and a method for stochastic simulations.  
+    A class used to calculate the total operation time of a schedule and the makespan of a problem.
+    The class also includes multiple methods of different levels for performing the gradient descent algorithm for stochastic simulations.  
     ...
     
     Attributes
@@ -29,48 +29,81 @@ class Calculator:
     -------
     getMachines()
         gets the machines
+
     getJobs()
         gets the jobs
+
     setMachines(machine)
         sets the machines
+
     setJobs(jobs)
         sets the jobs
+
     getRandomSchedule()
         gets a random schedule
+
     positionSwap(list, p1, p2)
         swaps position for checking neighbours in gradient descent
+
     fromTuple2List
-        creates a list from candidate schedules 
+        creates a list from candidate schedules
+
     generateAllPossibleSchedules()
         generates all possible schedules
+
     generateAllPossibleSchedulesWithUncertainties(leftTail, rightTail)
         generates all possible schedules with uncertainties
+
     calcTotalOperationTime(schedule, problem)
-        calculates the total operation time
+        calculates the total operation time for a given schedule in a problem
+
     calcTotalUncertainOperationTime(schedule, problem)
-        calculates the total operation time with uncertainties
+        calculates the total operation time with uncertainties for a given schedule in a problem
+
     experimentAllSchedules(problem)
         gives the best and worst schedule, with their corresponding duration, for a given problem using a brute force algorithm.
+
     gradientDescentV1(problem)
-        HHHhhhhHHHHHHHH
+        Implements the gradient descent algorithm that guesses an schedule, and through observing the operation time of its neighbours
+        moves in the downhill direction of faster schedule times until it meets a minimum.
+
     gradientDescentV2(problem, n_initialStates)
-        HHHhhhhHHHHHHHH
+        Implements the gradient descent algorithm that guesses multiple schedules to not be victim for local minimums.
+        When a local minimum is reached, the algorithm can still rely on another gradient descent path that hopefully find the best schedule,
+        the n_initialStates variable controls the amount of guesses and the algorithm should initialize. It also holds track of the neighbours it has
+        already calculated, it therefore does not calculate any previous state multiple times.
+
     experimentalStudyGradientDescent(problem, n_initialStates)
-        HHHhhhhHHHHHHHH
+        Conducts an experimental study to investigate the differences in the two gradient descent algorithms, which displays that the first initial algorithm
+        may fall into a local minimum which does not result in the best schedule. We save computational power aswell by not calculating some neighbours
+        twice, but this effect is overshadowed by the extra computational power to run multiple guesses and investigate its neighbours.
+
     gradientDescentV2Uncertainties(problem, n_initialStates, leftTail, rightTail)
-        HHHhhhhHHHHHHHH
+        Takes the same logic as gradientDescentV2 but implements a factor of uncertainty based on a triangular distribution with the original duration as mode.
+        This makes the schedule open for delays but also early finishes, this form of uncertainty will lead to different results, which needs to converge.
+
     experimentalStudyUncertainties(problem, n_initialStates, leftTail, rightTail, allowedError)
-        HHHhhhhHHHHHHHH
+        We here want to tackle the problem with the uncertainties, which is calculate how many iterations we need for the results to converge when uncertainties is presented.
+        This is done by an experimental study of the different calculations, iterations and runtime.
+
     calculateBestNeighbour(schedule, problem, makespan, alreadyCheckedSchedule)
-        HHHhhhhHHHHHHHH
+        Takes in a schedule and finds all the different neighbours of that specific schedule.
+        It then calculates the makespan of all the neighbours and returns the best neighbour for the given schedule,
+        which is the next step of our algorithm.
+
     calculateBestNeighbourWithUncertainty(schedule, problem, makespan, alreadyCheckedSchedule)
-        HHHhhhhHHHHHHHH
+        Same logic as in calculateBestNeighbour but with the uncertainties introduced.
+
     gradientDescentUncertaintiesWithML(problem, n_initialStates, leftTail, rightTail)
-        HHHhhhhHHHHHHHH
+        The crown of the assignment.
+        Implements the best gradient descent algorithm and when N schedules have been calculated,
+        it runs a machine learning model (ensemble lightGBM) on the data to be able to predict future schedules.
+        This shows drastic value when the job scheduling problems really increases in size.
+
     calculateBestNeighbourWithUncertaintyML(schedule, problem, makespan, alreadyCheckedSchedule)
-        HHHhhhhHHHHHHHH
-    createPandasDataframe(problem, calculatedSchedules, createColumns=True)
-        HhhhhhhhHHHHH
+        Same logic as in calculateBestBeighbourWithUncertainty but with additional logic to support the machine learning prediction.
+        We are here given in the already fitted model, and can use it to predict all the neighbours,
+        instead of manually calculating the schedule time.
     '''
 
     def __init__(self, machines, jobs):
@@ -116,6 +149,9 @@ class Calculator:
     
     '''TASK 8'''
     def generateAllPossibleSchedules(self):
+        '''Generates all the possible schedules corresponding to a problem.'''
+
+
         simpleSchedule=[]
         for job in self.getJobs():
             for operation in job.getOperations():
@@ -150,11 +186,12 @@ class Calculator:
         
         return simpleSchedule
     
-    '''TASK 13'''
+    
     def generateAllPossibleSchedulesWithUncertainties(self):
         simpleSchedule=[]
         for job in self.getJobs():
-            simpleSchedule.append(job.getId())
+            for operation in job.getOperations():
+                simpleSchedule.append(job.getId())
 
         allCandidateSchedules=list(permutations(simpleSchedule))
         allCandidateSchedulesList = self.fromTuple2List(allCandidateSchedules)
@@ -168,6 +205,7 @@ class Calculator:
     '''TASK 7'''
     # schedule = [1,2,2,3,1,3,1,3]
     def calcTotalOperationTime(self, schedule, problem):
+        '''Calculates the operation time for a given schedule in a problem. '''
 
         for machine in problem.getMachines():
             machine.setOperations([])
@@ -200,6 +238,8 @@ class Calculator:
 
         return max(machineTimes)
     
+
+    '''TASK 13'''
     def calcTotalUncertainOperationTime(self, schedule, problem):
 
         for machine in problem.getMachines():
@@ -270,7 +310,6 @@ class Calculator:
     '''TASK 10'''
     def gradientDescentV1(self, problem):
         
-
         # This is the initial schedule choosed random
         simpleSchedule = self.generateSimpleSchedule()
         initialSchedule = self.createRandomSchedule(simpleSchedule)
@@ -291,6 +330,7 @@ class Calculator:
         
         print(f'The best schedule after gradient descent v1 is: {bestNeighbour}')
         print(f'With a makespan of: {makespan}')
+
 
         return bestNeighbour,makespan
     
@@ -336,11 +376,11 @@ class Calculator:
 
         start_timeV1 = time.time()
         self.gradientDescentV1(problem)
-        print(f'The runtime of the initial algorithm was: {round(time.time() - start_timeV1, 3)} seconds')
+        print(f'The runtime of the initial gradient descent algorithm was: {round(time.time() - start_timeV1, 3)} seconds\n')
 
         start_timeV2 = time.time()
         self.gradientDescentV2(problem, n_initialStates)
-        print(f'The runtime of the improved algorithm was: {round(time.time() - start_timeV2, 3)} seconds')
+        print(f'The runtime of the improved gradient descent algorithm was: {round(time.time() - start_timeV2, 3)} seconds\n')
     
     
     def gradientDescentV2Uncertainties(self, problem, n_initialStates, leftTail, rightTail): # tails given as a decimal representing percentage
@@ -381,6 +421,7 @@ class Calculator:
     '''TASK 14 & 15'''
     def experimentalStudyUncertainties(self, problem, n_initialStates, leftTail, rightTail, allowedError):
 
+        print('\n')
         start_timeV1 = time.time()
         bestSchedule, bestMakespan = self.gradientDescentV2(problem, n_initialStates)
         print(f'The runtime of the algorithm with determined durations was: {round(time.time() - start_timeV1, 3)} seconds\n')
@@ -475,7 +516,6 @@ class Calculator:
                 if len(calculatedSchedules) > trainingSize and unTrained:
 
                     dataframe = pd.DataFrame(calculatedSchedules)
-                    print(dataframe)
                     columns = []
                     for i in range(len(dataframe.iloc[0])):
                         if i == len(dataframe.loc[0])-1:
@@ -577,8 +617,3 @@ class Calculator:
                 continue
 
         return bestSchedule, makespan, neighboursCalced
-
-
-###Lage dataset over alle regna schedules
-###Når datasettet passerer en viss størrrelse, tren en ML algoritme på dataen
-###Bruk ML prediksjon i steden for å kalkulere scoren til en schedule. 

@@ -179,24 +179,28 @@ class Problem:
         writer.save()
 
 
-    def printProblem(self):    
-        ""
+    def printProblem(self): 
+        jobs=self.getJobs()
+        n_jobs=len(jobs)
+        n_operations=0
+        for job in jobs:
+            continue
 
 problem = Problem()
 #problem.loadAndFormatData('test3.xlsx')
 
 '''Here we overwrite the input file and create our own dataset with given parameters(for simplicity):'''
-problem.createRandomJobScheduling(nrOfJobs=5, maxOpsPerJob=200, minOpsPerJob=100, nrOfMachines=5, maxDuration=10)
+#problem.createRandomJobScheduling(nrOfJobs=5, maxOpsPerJob=200, minOpsPerJob=100, nrOfMachines=5, maxDuration=10)
 #problem.exportProblem2Excel()
 
-calculator = Calculator(problem.getMachines(), problem.getJobs())
+#calculator = Calculator(problem.getMachines(), problem.getJobs())
 #print(calculator.generateAllPossibleSchedules())
 #print(calculator.calcTotalOperationTime([1,2,2,3,1,3,1,3], problem))
 #print(calculator.calcTotalOperationTime([1,3,3,3,1,2,2,1], problem))
 
 #calculator.experimentAllSchedules(problem)
 #calculator.gradientDescentV1(problem)
-calculator.gradientDescentV2(problem, 3)
+#calculator.gradientDescentV2(problem, 3)
 #calculator.experimentalStudyGradientDescent(problem, n_initialStates=3)
 #calculator.experimentalStudyUncertainties(problem, n_initialStates=3, leftTail=0.5, rightTail=1.5, allowedError=0.01)
-calculator.gradientDescentUncertaintiesWithML(problem, 5, 0.5, 1.5, 100)
+#calculator.gradientDescentUncertaintiesWithML(problem, 5, 0.5, 1.5, 100)

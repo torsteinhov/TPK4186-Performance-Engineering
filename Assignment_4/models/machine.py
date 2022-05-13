@@ -69,12 +69,6 @@ class Machine:
         operation.setStart(start)
         operation.setJobId(jobId)
         self.getOperations().append(operation)
-        '''
-        # We want to handle the case where the machine has nothing to do
-        if start > len(self.getOperations()):
-
-            for i in range(start - len(self.getOperations())):
-                self.getOperations().append(0)'''
     
     def isAvailable(self, availability):
         self.available = availability
